@@ -140,15 +140,14 @@ def random_weight():
 
 def get_aggregate_height(board: List) -> int:
     aggregate_height = 0
-    column_not_checked = [i for i in range(len(board[0]))]
-
+    column_checked = []
     for row in range(len(board)):
-        for col in column_not_checked:
-            if (board[row][col] != 0):
-                #compute_height
-                # TODO check if needed to add 1
-                height = len(board) - row +1
+        for col in range(len(board[0])):
+            if not(col in column_checked) and board[row][col] != 0:
+
+                height = len(board) - row
                 aggregate_height += height
-                column_not_checked.remove(col)
+                column_checked.append(col)
+
     return aggregate_height
 

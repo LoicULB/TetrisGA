@@ -7,6 +7,8 @@ from TetrisSettings import *
 from TetrisParallel import MUTATION_RATE
 
 import random
+
+MUTATION_RATE = 0.1
 class BaseAgent:
     """ The framework of an agent class, all agents should inherit this class """
 
@@ -47,10 +49,10 @@ class GeneticAgent(BaseAgent):
 
         # TODO: Initialize weights randomly
 
-        self.weight_nb_holes = random.random()
-        self.weight_agregate = random.random()
-        self.weight_bumpiness = random.random()
-        self.weight_line_clear = random.random()
+        self.weight_holes = TUtils.random_weight()
+        self.weight_height = TUtils.random_weight()
+        self.weight_bumpiness = TUtils.random_weight()
+        self.weight_line_clear = TUtils.random_weight()
 
 
 
@@ -59,27 +61,18 @@ class GeneticAgent(BaseAgent):
         score = 0
         # Check if the board has any completed rows
         future_board, rows_cleared = TUtils.get_board_and_lines_cleared(board)
-        # TODO: calculate fitness score for the board
-        # TODO: calculate the aggregate height of the board and apply weights
+
         aggregate_height = TUtils.get_aggregate_height(board)
-        print("hello")
+        complete_aggregate_height =  sum(TUtils.get_col_heights(future_board))
 
-
-        # TODO: count the holes and apply weights
         nb_holes = TUtils.get_hole_count(board)
-
-        # TODO: calculate the "bumpiness" score and apply weights
         bumpiness = TUtils.get_bumpiness(board)
 
-        # TODO: Calculate the line-clear score and apply weights
+        score = self.weight_height * aggregate_height \
+                + self.weight_holes * nb_holes \
+                + self.weight_line_clear * rows_cleared \
+                + self.weight_bumpiness * bumpiness
 
-
-        score = self.weight_agregate * aggregate_height\
-                + self.weight_nb_holes * nb_holes\
-                + self.weight_line_clear * rows_cleared\
-                + self.weight_bumpiness *bumpiness
-
-        # Return the final score
         return score
 
     def cross_over(self, agent ):
@@ -89,40 +82,62 @@ class GeneticAgent(BaseAgent):
         :param agent: the other parent agent
         :return: "child" agent
         """
-        # Create a new agent (the child agent)
+
         child = GeneticAgent()
 
-        # TODO: randomly assign weights from both parents
-        take_from_parent_1_bumpiness = random.randint(0,1)
-        take_from_parent_1_holes = random.randint(0,1)
-        take_from_parent_1_aggregate = random.randint(0,1)
-        take_from_parent_1_clear = random.randint(0,1)
+        self.crossover_genes(agent, child)
+        self.mutate_genes(child)
 
+        return child
+
+    def crossover_genes(self, agent, child):
+        """
+        take_from_parent_1_bumpiness = random.randint(0, 1)
+        take_from_parent_1_holes = random.randint(0, 1)
+        take_from_parent_1_aggregate = random.randint(0, 1)
+        take_from_parent_1_clear = random.randint(0, 1)
+        """
+        take_from_parent_1_bumpiness = random.getrandbits(1)
+        take_from_parent_1_holes = random.getrandbits(1)
+        take_from_parent_1_aggregate = random.getrandbits(1)
+        take_from_parent_1_clear = random.getrandbits(1)
         if (take_from_parent_1_clear):
             child.weight_line_clear = self.weight_line_clear
         else:
             child.weight_line_clear = agent.weight_line_clear
-
         if (take_from_parent_1_aggregate):
-            child.weight_agregate = self.weight_agregate
+            child.weight_height = self.weight_height
         else:
-            child.weight_line_clear = agent.weight_agregate
-
+            child.weight_height = agent.weight_height
         if (take_from_parent_1_holes):
-            child.weight_nb_holes = self.weight_nb_holes
+            child.weight_holes = self.weight_holes
         else:
-            child.weight_nb_holes = agent.weight_nb_holes
-
+            child.weight_holes = agent.weight_holes
         if (take_from_parent_1_bumpiness):
             child.weight_bumpiness = self.weight_bumpiness
         else:
-            child.weight_bumpiness= agent.weight_bumpiness
+            child.weight_bumpiness = agent.weight_bumpiness
 
-        # TODO: randomly mutate weights
-        pass
+    def mutate_genes(self, child):
+        """
+        if random.random() < MUTATION_RATE:
+            child.weight_line_clear = random.random(-1,)
+        if random.random() < MUTATION_RATE:
+            child.weight_height = random.random()
+        if random.random() < MUTATION_RATE:
+            child.weight_bumpiness = random.random()
+        if random.random() < MUTATION_RATE:
+            child.weight_holes = random.random()
 
-        # Return completed child model
-        return child
+        """
+        if random.random() < MUTATION_RATE:
+            child.weight_line_clear = TUtils.random_weight()
+        if random.random() < MUTATION_RATE:
+            child.weight_height = TUtils.random_weight()
+        if random.random() < MUTATION_RATE:
+            child.weight_bumpiness = TUtils.random_weight()
+        if random.random() < MUTATION_RATE:
+            child.weight_holes = TUtils.random_weight()
 
     # Overrides parent's "abstract" method
     def calculate_actions(self, board, current_tile, next_tile, offsets) -> List[int]:
