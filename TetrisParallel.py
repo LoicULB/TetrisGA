@@ -11,8 +11,8 @@ from TetrisAgents import *
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 4
-COL_COUNT = 6
+ROW_COUNT = 3 #4
+COL_COUNT = 3 #6
 GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
 
 # Size of each Tetris display

@@ -116,6 +116,36 @@ def get_bumpiness(board):
     return bumpiness
 
 
+# Get the aggregate height of all the columns
+def get_aggregate_height(board: List) -> int:
+    aggregate_height = 0
+    column_checked = []
+    for row in range(GRID_ROW_COUNT):
+        for col in range(GRID_COL_COUNT):
+            if not (col in column_checked) and board[row][col] != 0:
+                height = len(board) - row
+                aggregate_height += height
+                column_checked.append(col)
+
+    return aggregate_height
+
+
+# Get the number of columns containing at least one hole
+def get_hollow_column_count(board):
+    nb_hollow_columns = 0
+    for col in range(GRID_COL_COUNT):
+        is_started = False
+        for row in range( GRID_ROW_COUNT):
+            if not is_started:
+                if board[row][col] != 0:
+                    is_started = True
+            else:
+                if board[row][col] == 0:
+                    nb_hollow_columns += 1
+                    break
+    return nb_hollow_columns
+
+
 # Get potential lines cleared
 # WARNING: MODIFIES BOARD!!!
 def get_board_and_lines_cleared(board):
@@ -137,17 +167,3 @@ def get_board_and_lines_cleared(board):
 
 def random_weight():
     return random.uniform(-1, 1)
-
-def get_aggregate_height(board: List) -> int:
-    aggregate_height = 0
-    column_checked = []
-    for row in range(len(board)):
-        for col in range(len(board[0])):
-            if not(col in column_checked) and board[row][col] != 0:
-
-                height = len(board) - row
-                aggregate_height += height
-                column_checked.append(col)
-
-    return aggregate_height
-

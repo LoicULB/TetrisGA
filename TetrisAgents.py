@@ -47,12 +47,13 @@ class GeneticAgent(BaseAgent):
     def __init__(self):
         super().__init__()
 
-        # TODO: Initialize weights randomly
-
         self.weight_holes = TUtils.random_weight()
         self.weight_height = TUtils.random_weight()
         self.weight_bumpiness = TUtils.random_weight()
         self.weight_line_clear = TUtils.random_weight()
+
+        #additional heuristics
+        self.weight_hollow_columns = TUtils.random_weight()
 
 
 
@@ -67,11 +68,13 @@ class GeneticAgent(BaseAgent):
 
         nb_holes = TUtils.get_hole_count(board)
         bumpiness = TUtils.get_bumpiness(board)
+        nb_hollow_columns = TUtils.get_hollow_column_count(board)
 
         score = self.weight_height * aggregate_height \
                 + self.weight_holes * nb_holes \
                 + self.weight_line_clear * rows_cleared \
-                + self.weight_bumpiness * bumpiness
+                + self.weight_bumpiness * bumpiness \
+                + self.weight_hollow_columns * nb_hollow_columns
 
         return score
 
@@ -101,6 +104,7 @@ class GeneticAgent(BaseAgent):
         take_from_parent_1_holes = random.getrandbits(1)
         take_from_parent_1_aggregate = random.getrandbits(1)
         take_from_parent_1_clear = random.getrandbits(1)
+        take_from_parent_1_hollow_columns = random.getrandbits(1)
         if (take_from_parent_1_clear):
             child.weight_line_clear = self.weight_line_clear
         else:
@@ -117,6 +121,11 @@ class GeneticAgent(BaseAgent):
             child.weight_bumpiness = self.weight_bumpiness
         else:
             child.weight_bumpiness = agent.weight_bumpiness
+
+        if (take_from_parent_1_hollow_columns):
+            child.weight_hollow_columns = self.weight_hollow_columns
+        else:
+            child.weight_hollow_columns = agent.weight_hollow_columns
 
     def mutate_genes(self, child):
         """
@@ -138,6 +147,8 @@ class GeneticAgent(BaseAgent):
             child.weight_bumpiness = TUtils.random_weight()
         if random.random() < MUTATION_RATE:
             child.weight_holes = TUtils.random_weight()
+        if random.random() < MUTATION_RATE:
+            child.weight_hollow_columns = TUtils.random_weight()
 
     # Overrides parent's "abstract" method
     def calculate_actions(self, board, current_tile, next_tile, offsets) -> List[int]:

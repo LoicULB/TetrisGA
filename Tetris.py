@@ -21,7 +21,7 @@ class Tetris:
         # Game over indicator
         self.game_over = True
         # Game board: 2D array of integers representing pieces
-        self.board = []
+        self.board = [] #todo: replace by a numpy array
         self.tile_pool = []
         # Tiles are represented as strings in:
         # ["LINE", "L", "L_REVERSED", "S", "S_REVERSED", "T", "CUBE"]
