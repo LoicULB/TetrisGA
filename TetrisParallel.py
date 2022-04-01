@@ -41,6 +41,8 @@ MUTATION_RATE = 0.1  # 10% mutation chance
 TETRIS_GAMES = []
 # List of agents
 AGENTS = []
+# List of heuristics labels to display
+HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hollow column"]
 
 ########################
 # Genetics Information #
@@ -52,7 +54,7 @@ gen_top_score = 0.0
 
 # Set a time limit so no forever games
 time_elapsed = 0
-time_limit = 1000
+time_limit = 500 #1000
 
 
 def update(screen):
@@ -160,14 +162,19 @@ def draw(screen):
         if agent_index != -1:
             draw_text(f"Agent #{agent_index}:", screen, (curr_x, curr_y), font_size=24)
             curr_y += 35
-            draw_text(f">> Agg Height: {AGENTS[agent_index].weight_height:.1f}", screen, (curr_x, curr_y))
+
+            for index in AGENTS[agent_index].weight_to_consider :
+                draw_text(f">> {HEURISTICS_LABELS[index]}: {AGENTS[agent_index].weight_array[index]:.1f}", screen, (curr_x, curr_y))
+                curr_y += 20
+
+            """draw_text(f">> Agg Height: {AGENTS[agent_index].weight_height:.1f}", screen, (curr_x, curr_y))
             curr_y += 20
             draw_text(f">> Hole Count: {AGENTS[agent_index].weight_holes:.1f}", screen, (curr_x, curr_y))
             curr_y += 20
             draw_text(f">> Bumpiness:  {AGENTS[agent_index].weight_bumpiness:.1f}", screen, (curr_x, curr_y))
             curr_y += 20
             draw_text(f">> Line Clear: {AGENTS[agent_index].weight_line_clear:.1f}", screen, (curr_x, curr_y))
-            curr_y += 20
+            curr_y += 20"""
             if highlight_selected:
                 highlight(screen, selected, mode=1)
             else:

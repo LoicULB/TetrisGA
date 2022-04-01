@@ -47,34 +47,62 @@ class GeneticAgent(BaseAgent):
     def __init__(self):
         super().__init__()
 
+        self.weight_array = []
+
         self.weight_holes = TUtils.random_weight()
+        self.weight_array.append(self.weight_holes)
+
         self.weight_height = TUtils.random_weight()
+        self.weight_array.append(self.weight_height)
+
         self.weight_bumpiness = TUtils.random_weight()
+        self.weight_array.append(self.weight_bumpiness)
+
         self.weight_line_clear = TUtils.random_weight()
+        self.weight_array.append(self.weight_line_clear)
 
         #additional heuristics
         self.weight_hollow_columns = TUtils.random_weight()
+        self.weight_array.append(self.weight_hollow_columns)
 
+        """ TODO: add this element
+        self.weight_row_transition = TUtils.random_weight()
+        self.weight_array.append(self.weight_row_transition)"""
+
+        self.weight_to_consider = [i for i in range(len(self.weight_array))]
 
 
     def get_fitness(self, board):
         """ Utility method to calculate fitness score """
-        score = 0
         # Check if the board has any completed rows
         future_board, rows_cleared = TUtils.get_board_and_lines_cleared(board)
 
-        aggregate_height = TUtils.get_aggregate_height(board)
-        complete_aggregate_height =  sum(TUtils.get_col_heights(future_board))
+        heuristics = [0 for i in range(len(self.weight_array))]
 
-        nb_holes = TUtils.get_hole_count(board)
-        bumpiness = TUtils.get_bumpiness(board)
-        nb_hollow_columns = TUtils.get_hollow_column_count(board)
+        if 0 in self.weight_to_consider:
+            heuristics[0] = TUtils.get_hole_count(future_board)
 
-        score = self.weight_height * aggregate_height \
+        if 1 in self.weight_to_consider:
+            heuristics[1] = TUtils.get_aggregate_height(future_board)
+
+        if 2 in self.weight_to_consider:
+            heuristics[2] = TUtils.get_bumpiness(future_board)
+
+        if 3 in self.weight_to_consider:
+            heuristics[3] = rows_cleared
+
+        if 4 in self.weight_to_consider:
+            heuristics[4] = TUtils.get_hollow_column_count(future_board)
+
+        """score = self.weight_height * aggregate_height \
                 + self.weight_holes * nb_holes \
                 + self.weight_line_clear * rows_cleared \
                 + self.weight_bumpiness * bumpiness \
-                + self.weight_hollow_columns * nb_hollow_columns
+                + self.weight_hollow_columns * nb_hollow_columns"""
+
+        score = 0
+        for index in self.weight_to_consider:
+            score += self.weight_array[index]*heuristics[index]
 
         return score
 
@@ -100,11 +128,12 @@ class GeneticAgent(BaseAgent):
         take_from_parent_1_aggregate = random.randint(0, 1)
         take_from_parent_1_clear = random.randint(0, 1)
         """
-        take_from_parent_1_bumpiness = random.getrandbits(1)
+        """take_from_parent_1_bumpiness = random.getrandbits(1)
         take_from_parent_1_holes = random.getrandbits(1)
         take_from_parent_1_aggregate = random.getrandbits(1)
         take_from_parent_1_clear = random.getrandbits(1)
         take_from_parent_1_hollow_columns = random.getrandbits(1)
+        
         if (take_from_parent_1_clear):
             child.weight_line_clear = self.weight_line_clear
         else:
@@ -125,7 +154,13 @@ class GeneticAgent(BaseAgent):
         if (take_from_parent_1_hollow_columns):
             child.weight_hollow_columns = self.weight_hollow_columns
         else:
-            child.weight_hollow_columns = agent.weight_hollow_columns
+            child.weight_hollow_columns = agent.weight_hollow_columns"""
+
+        for index in self.weight_to_consider:
+            if random.getrandbits(1):
+                child.weight_array[index] = self.weight_array[index]
+            else:
+                child.weight_array[index] = agent.weight_array[index]
 
     def mutate_genes(self, child):
         """
@@ -139,7 +174,7 @@ class GeneticAgent(BaseAgent):
             child.weight_holes = random.random()
 
         """
-        if random.random() < MUTATION_RATE:
+        """if random.random() < MUTATION_RATE:
             child.weight_line_clear = TUtils.random_weight()
         if random.random() < MUTATION_RATE:
             child.weight_height = TUtils.random_weight()
@@ -148,7 +183,11 @@ class GeneticAgent(BaseAgent):
         if random.random() < MUTATION_RATE:
             child.weight_holes = TUtils.random_weight()
         if random.random() < MUTATION_RATE:
-            child.weight_hollow_columns = TUtils.random_weight()
+            child.weight_hollow_columns = TUtils.random_weight()"""
+
+        for index in self.weight_to_consider:
+            if random.random() < MUTATION_RATE:
+                child.weight_array[index] = TUtils.random_weight()
 
     # Overrides parent's "abstract" method
     def calculate_actions(self, board, current_tile, next_tile, offsets) -> List[int]:
