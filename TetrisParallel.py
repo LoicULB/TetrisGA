@@ -42,7 +42,8 @@ TETRIS_GAMES = []
 # List of agents
 AGENTS = []
 # List of heuristics labels to display
-HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hollow column"]
+HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hollow Column",
+                     "Row Transition", "Column Transition", "Pit Count"]
 
 ########################
 # Genetics Information #
@@ -167,14 +168,6 @@ def draw(screen):
                 draw_text(f">> {HEURISTICS_LABELS[index]}: {AGENTS[agent_index].weight_array[index]:.1f}", screen, (curr_x, curr_y))
                 curr_y += 20
 
-            """draw_text(f">> Agg Height: {AGENTS[agent_index].weight_height:.1f}", screen, (curr_x, curr_y))
-            curr_y += 20
-            draw_text(f">> Hole Count: {AGENTS[agent_index].weight_holes:.1f}", screen, (curr_x, curr_y))
-            curr_y += 20
-            draw_text(f">> Bumpiness:  {AGENTS[agent_index].weight_bumpiness:.1f}", screen, (curr_x, curr_y))
-            curr_y += 20
-            draw_text(f">> Line Clear: {AGENTS[agent_index].weight_line_clear:.1f}", screen, (curr_x, curr_y))
-            curr_y += 20"""
             if highlight_selected:
                 highlight(screen, selected, mode=1)
             else:

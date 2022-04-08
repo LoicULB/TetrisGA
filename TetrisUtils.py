@@ -135,7 +135,7 @@ def get_hollow_column_count(board):
     nb_hollow_columns = 0
     for col in range(GRID_COL_COUNT):
         is_started = False
-        for row in range( GRID_ROW_COUNT):
+        for row in range(GRID_ROW_COUNT):
             if not is_started:
                 if board[row][col] != 0:
                     is_started = True
@@ -145,6 +145,63 @@ def get_hollow_column_count(board):
                     break
     return nb_hollow_columns
 
+# Get the number of row transition, meaning the number of times we got from occupied cell to unoccupied cell
+# when reading row by row.
+def get_row_transition(board):
+    nb_row_transition = 0
+    for row in range(GRID_ROW_COUNT-1, -1, -1):
+        is_empty = True if board[row][0] == 0 else False
+        is_line_empty = True
+        for col in range(GRID_COL_COUNT):
+            if board[row][col] == 0 and not is_empty:
+                nb_row_transition += 1
+                is_empty = True
+            elif board[row][col] != 0 and is_empty:
+                nb_row_transition += 1
+                is_empty = False
+                is_line_empty = False
+        if is_line_empty:
+            break
+    return nb_row_transition
+
+# Variant
+def get_row_transition_from_top(board):
+    nb_row_transition = 0
+    for row in range(GRID_ROW_COUNT):
+        is_empty = True if board[row][0] == 0 else False
+        for col in range(GRID_COL_COUNT):
+            if board[row][col] == 0 and not is_empty:
+                nb_row_transition += 1
+                is_empty = True
+            elif board[row][col] != 0 and is_empty:
+                nb_row_transition += 1
+                is_empty = False
+    return nb_row_transition
+
+# Get the number of column transition, meaning the number of times we got from occupied cell to unoccupied cell
+# when reading column by column.
+def get_col_transition(board):
+    nb_col_transition = 0
+    for col in range(GRID_COL_COUNT):
+        is_empty = True if board[0][col] == 0 else False
+        for row in range(GRID_ROW_COUNT):
+            if board[row][col] == 0 and not is_empty:
+                nb_col_transition += 1
+                is_empty = True
+            elif board[row][col] != 0 and is_empty:
+                nb_col_transition += 1
+                is_empty = False
+    return nb_col_transition
+
+# Get the number of empty column
+def get_pit_count(board):
+    nb_pit = GRID_COL_COUNT
+    for col in range(GRID_COL_COUNT):
+        for row in range(GRID_ROW_COUNT):
+            if board[row][col] != 0:
+                nb_pit -= 1
+                break
+    return nb_pit
 
 # Get potential lines cleared
 # WARNING: MODIFIES BOARD!!!

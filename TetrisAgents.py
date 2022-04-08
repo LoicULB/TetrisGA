@@ -65,10 +65,16 @@ class GeneticAgent(BaseAgent):
         self.weight_hollow_columns = TUtils.random_weight()
         self.weight_array.append(self.weight_hollow_columns)
 
-        """ TODO: add this element
         self.weight_row_transition = TUtils.random_weight()
-        self.weight_array.append(self.weight_row_transition)"""
+        self.weight_array.append(self.weight_row_transition)
 
+        self.weight_col_transition = TUtils.random_weight()
+        self.weight_array.append(self.weight_col_transition)
+
+        self.weight_pit_count = TUtils.random_weight()
+        self.weight_array.append(self.weight_pit_count)
+
+        #todo: change to see the impact of having or not several heuristics
         self.weight_to_consider = [i for i in range(len(self.weight_array))]
 
 
@@ -94,11 +100,14 @@ class GeneticAgent(BaseAgent):
         if 4 in self.weight_to_consider:
             heuristics[4] = TUtils.get_hollow_column_count(future_board)
 
-        """score = self.weight_height * aggregate_height \
-                + self.weight_holes * nb_holes \
-                + self.weight_line_clear * rows_cleared \
-                + self.weight_bumpiness * bumpiness \
-                + self.weight_hollow_columns * nb_hollow_columns"""
+        if 5 in self.weight_to_consider:
+            heuristics[5] = TUtils.get_row_transition(future_board)
+
+        if 6 in self.weight_to_consider:
+            heuristics[6] = TUtils.get_col_transition(future_board)
+
+        if 7 in self.weight_to_consider:
+            heuristics[7] = TUtils.get_pit_count(future_board)
 
         score = 0
         for index in self.weight_to_consider:
@@ -122,40 +131,6 @@ class GeneticAgent(BaseAgent):
         return child
 
     def crossover_genes(self, agent, child):
-        """
-        take_from_parent_1_bumpiness = random.randint(0, 1)
-        take_from_parent_1_holes = random.randint(0, 1)
-        take_from_parent_1_aggregate = random.randint(0, 1)
-        take_from_parent_1_clear = random.randint(0, 1)
-        """
-        """take_from_parent_1_bumpiness = random.getrandbits(1)
-        take_from_parent_1_holes = random.getrandbits(1)
-        take_from_parent_1_aggregate = random.getrandbits(1)
-        take_from_parent_1_clear = random.getrandbits(1)
-        take_from_parent_1_hollow_columns = random.getrandbits(1)
-        
-        if (take_from_parent_1_clear):
-            child.weight_line_clear = self.weight_line_clear
-        else:
-            child.weight_line_clear = agent.weight_line_clear
-        if (take_from_parent_1_aggregate):
-            child.weight_height = self.weight_height
-        else:
-            child.weight_height = agent.weight_height
-        if (take_from_parent_1_holes):
-            child.weight_holes = self.weight_holes
-        else:
-            child.weight_holes = agent.weight_holes
-        if (take_from_parent_1_bumpiness):
-            child.weight_bumpiness = self.weight_bumpiness
-        else:
-            child.weight_bumpiness = agent.weight_bumpiness
-
-        if (take_from_parent_1_hollow_columns):
-            child.weight_hollow_columns = self.weight_hollow_columns
-        else:
-            child.weight_hollow_columns = agent.weight_hollow_columns"""
-
         for index in self.weight_to_consider:
             if random.getrandbits(1):
                 child.weight_array[index] = self.weight_array[index]
@@ -163,28 +138,6 @@ class GeneticAgent(BaseAgent):
                 child.weight_array[index] = agent.weight_array[index]
 
     def mutate_genes(self, child):
-        """
-        if random.random() < MUTATION_RATE:
-            child.weight_line_clear = random.random(-1,)
-        if random.random() < MUTATION_RATE:
-            child.weight_height = random.random()
-        if random.random() < MUTATION_RATE:
-            child.weight_bumpiness = random.random()
-        if random.random() < MUTATION_RATE:
-            child.weight_holes = random.random()
-
-        """
-        """if random.random() < MUTATION_RATE:
-            child.weight_line_clear = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
-            child.weight_height = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
-            child.weight_bumpiness = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
-            child.weight_holes = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
-            child.weight_hollow_columns = TUtils.random_weight()"""
-
         for index in self.weight_to_consider:
             if random.random() < MUTATION_RATE:
                 child.weight_array[index] = TUtils.random_weight()
