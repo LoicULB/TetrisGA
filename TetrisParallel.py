@@ -2,6 +2,8 @@
 
 # Imports
 import pygame
+
+from SaveModel import save_gen
 from Tetris import Tetris
 import TetrisUtils as TUtils
 from TetrisSettings import *
@@ -67,6 +69,8 @@ def update(screen):
 
     # Check if all agents have reached game over state
     if all(tetris.game_over for tetris in TETRIS_GAMES) or (time_limit != -1 and time_elapsed % time_limit == 0):
+        df = save_gen(AGENTS, TETRIS_GAMES, None)
+        df.to_csv(f"./SavedModel/model_gen_{gen_generation}.csv", encoding="utf-8", index=False)
         time_elapsed = 0
         # Everyone "died" or time's up, select best one and cross over
         combos = zip(AGENTS, TETRIS_GAMES)

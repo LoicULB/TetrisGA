@@ -1,8 +1,9 @@
 from typing import List
 
+import Tetris
 from TetrisAgents import GeneticAgent
 import pandas as pd
-from TetrisParallel import HEURISTICS_LABELS
+
 def get_agent_dict(agent : GeneticAgent):
     """
     Get the dict of the agent's weight
@@ -20,12 +21,15 @@ def get_agent_dict(agent : GeneticAgent):
     }
     return data
 
-def save_gen(agents_list : List[GeneticAgent], weight_to_consider : List[int]):
+def save_gen(agents_list : List[GeneticAgent], tetris_games : List[Tetris.Tetris], weight_to_consider : List[int]):
     """
     Save a generation of the tetris game into a csv file.
     """
     data=[]
-    for agent in agents_list:
-        data.append(get_agent_dict(agent))
+    for agent_index in range(len(agents_list)):
+        agent_dict = get_agent_dict(agents_list[agent_index])
+        agent_dict["score"] = tetris_games[agent_index].score
+        data.append(agent_dict)
+
     gen_df = pd.DataFrame(data)
     return gen_df
