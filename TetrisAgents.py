@@ -1,5 +1,4 @@
 # Imports
-import random
 from typing import *
 from Tetris import Tetris
 import TetrisUtils as TUtils
@@ -7,6 +6,7 @@ from TetrisSettings import *
 
 
 import random
+import numpy as np
 
 MUTATION_RATE = 0.1
 class BaseAgent:
@@ -38,7 +38,7 @@ class RandomAgent(BaseAgent):
     """ Agent that randomly picks actions """
 
     def calculate_actions(self, board, current_tile, next_tile, offsets):
-        return [random.randint(0, 8) for _ in range(10)]
+        return [np.random.randint(0, 8) for _ in range(10)]     # np
 
 
 class GeneticAgent(BaseAgent):
@@ -139,7 +139,7 @@ class GeneticAgent(BaseAgent):
 
     def mutate_genes(self, child):
         for index in self.weight_to_consider:
-            if random.random() < MUTATION_RATE:
+            if np.random.random() < MUTATION_RATE:          # np
                 child.weight_array[index] = TUtils.random_weight()
 
     # Overrides parent's "abstract" method
@@ -201,10 +201,10 @@ class GeneticAgentComplete(GeneticAgent):
         super().__init__()
 
         # Initialize weights randomly
-        self.weight_height = random.random()
-        self.weight_holes = random.random()
-        self.weight_bumpiness = random.random()
-        self.weight_line_clear = random.random()
+        self.weight_height = np.random.random_sample()         # np
+        self.weight_holes = np.random.random_sample()          # np
+        self.weight_bumpiness = np.random.random_sample()      # np
+        self.weight_line_clear = np.random.random_sample()     # np
 
     def get_fitness(self, board):
         """ Utility method to calculate fitness score """
@@ -237,13 +237,13 @@ class GeneticAgentComplete(GeneticAgent):
         child.weight_line_clear = self.weight_line_clear if random.getrandbits(1) else agent.weight_line_clear
 
         # Randomly mutate weights
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_height = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_holes = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_bumpiness = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_line_clear = TUtils.random_weight()
 
         # Return completed child model

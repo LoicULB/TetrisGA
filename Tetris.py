@@ -5,6 +5,7 @@ import random
 import TetrisUtils as TUtils
 from TetrisSettings import *
 
+import numpy as np
 
 # This is the bare bones of the tetris game
 # Does not contain UI, simply a 2D array playing tetris
@@ -92,6 +93,7 @@ class Tetris:
         """ Resets the tile pool """
         self.tile_pool = list(TILE_SHAPES.keys())
         random.shuffle(self.tile_pool)
+        # np.random.shuffle(self.tile_pool)
 
     def on_tile_collision(self):
         # Add current tile to board

@@ -4,6 +4,8 @@ from typing import List
 
 from TetrisSettings import *
 
+import numpy as np
+
 
 ###########################
 # Board Helper Algorithms #
@@ -223,4 +225,4 @@ def get_board_and_lines_cleared(board):
 
 
 def random_weight():
-    return random.uniform(-1, 1)
+    return np.random.uniform(-1, 1)
