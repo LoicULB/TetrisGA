@@ -48,34 +48,44 @@ class GeneticAgent(BaseAgent):
         super().__init__()
 
         self.weight_array = []
+        # self.weight_array = np.array([])
 
         self.weight_holes = TUtils.random_weight()
         self.weight_array.append(self.weight_holes)
+        # np.append(self.weight_array, self.weight_holes)
 
         self.weight_height = TUtils.random_weight()
         self.weight_array.append(self.weight_height)
+        # np.append(self.weight_array, self.weight_height)
 
         self.weight_bumpiness = TUtils.random_weight()
         self.weight_array.append(self.weight_bumpiness)
+        # np.append(self.weight_array, self.weight_bumpiness)
 
         self.weight_line_clear = TUtils.random_weight()
         self.weight_array.append(self.weight_line_clear)
+        # np.append(self.weight_array, self.weight_line_clear)
 
         #additional heuristics
         self.weight_hollow_columns = TUtils.random_weight()
         self.weight_array.append(self.weight_hollow_columns)
+        # np.append(self.weight_array, self.weight_hollow_columns)
 
         self.weight_row_transition = TUtils.random_weight()
         self.weight_array.append(self.weight_row_transition)
+        # np.append(self.weight_array, self.weight_row_transition)
 
         self.weight_col_transition = TUtils.random_weight()
         self.weight_array.append(self.weight_col_transition)
+        # np.append(self.weight_array, self.weight_col_transition)
 
         self.weight_pit_count = TUtils.random_weight()
         self.weight_array.append(self.weight_pit_count)
+        # np.append(self.weight_array, self.weight_pit_count)
 
         #todo: change to see the impact of having or not several heuristics
         self.weight_to_consider = [i for i in range(len(self.weight_array))]
+        # self.weight_to_consider = np.asarray(self.weight_to_consider)
 
 
     def get_fitness(self, board):
@@ -132,7 +142,7 @@ class GeneticAgent(BaseAgent):
 
     def crossover_genes(self, agent, child):
         for index in self.weight_to_consider:
-            if random.getrandbits(1):
+            if random.getrandbits(1):   # todo: NumPy equivalent to random.getrandbits()
                 child.weight_array[index] = self.weight_array[index]
             else:
                 child.weight_array[index] = agent.weight_array[index]
