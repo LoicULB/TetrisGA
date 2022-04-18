@@ -91,7 +91,8 @@ def update(screen):
         # Randomly breed the rest of the agents
         while len(AGENTS) < GAME_COUNT:
             parent1, parent2 = random.sample(parents, 2)
-            AGENTS.append(parent1.cross_over(parent2))
+            #AGENTS.append(parent1.cross_over(parent2))
+            AGENTS.append(GeneticAgent())
 
         # Reset games
         for tetris in TETRIS_GAMES:
