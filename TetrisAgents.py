@@ -75,7 +75,7 @@ class GeneticAgent(BaseAgent):
         self.weight_array.append(self.weight_pit_count)
 
         #todo: change to see the impact of having or not several heuristics
-        self.weight_to_consider = [i for i in range(len(self.weight_array))]
+        self.weight_to_consider = [0,1,2,3,6]
 
 
     def get_fitness(self, board):
