@@ -7,6 +7,7 @@ from TetrisSettings import *
 
 
 import random
+import numpy as np
 
 MUTATION_RATE = 0.1
 class BaseAgent:
@@ -38,7 +39,7 @@ class RandomAgent(BaseAgent):
     """ Agent that randomly picks actions """
 
     def calculate_actions(self, board, current_tile, next_tile, offsets):
-        return [random.randint(0, 8) for _ in range(10)]
+        return [np.random.randint(0, 8) for _ in range(10)]     # np
 
 
 class GeneticAgent(BaseAgent):
@@ -48,34 +49,44 @@ class GeneticAgent(BaseAgent):
         super().__init__()
 
         self.weight_array = []
+        # self.weight_array = np.array([])
 
         self.weight_holes = TUtils.random_weight()
         self.weight_array.append(self.weight_holes)
+        # np.append(self.weight_array, self.weight_holes)
 
         self.weight_height = TUtils.random_weight()
         self.weight_array.append(self.weight_height)
+        # np.append(self.weight_array, self.weight_height)
 
         self.weight_bumpiness = TUtils.random_weight()
         self.weight_array.append(self.weight_bumpiness)
+        # np.append(self.weight_array, self.weight_bumpiness)
 
         self.weight_line_clear = TUtils.random_weight()
         self.weight_array.append(self.weight_line_clear)
+        # np.append(self.weight_array, self.weight_line_clear)
 
         #additional heuristics
         self.weight_hollow_columns = TUtils.random_weight()
         self.weight_array.append(self.weight_hollow_columns)
+        # np.append(self.weight_array, self.weight_hollow_columns)
 
         self.weight_row_transition = TUtils.random_weight()
         self.weight_array.append(self.weight_row_transition)
+        # np.append(self.weight_array, self.weight_row_transition)
 
         self.weight_col_transition = TUtils.random_weight()
         self.weight_array.append(self.weight_col_transition)
+        # np.append(self.weight_array, self.weight_col_transition)
 
         self.weight_pit_count = TUtils.random_weight()
         self.weight_array.append(self.weight_pit_count)
+        # np.append(self.weight_array, self.weight_pit_count)
 
         #todo: change to see the impact of having or not several heuristics
-        self.weight_to_consider = [0,1,2,3,6]
+        self.weight_to_consider = [i for i in range(len(self.weight_array))]
+        # self.weight_to_consider = np.asarray(self.weight_to_consider)
 
 
     def get_fitness(self, board):
@@ -132,14 +143,14 @@ class GeneticAgent(BaseAgent):
 
     def crossover_genes(self, agent, child):
         for index in self.weight_to_consider:
-            if random.getrandbits(1):
+            if random.getrandbits(1):   # todo: NumPy equivalent to random.getrandbits()
                 child.weight_array[index] = self.weight_array[index]
             else:
                 child.weight_array[index] = agent.weight_array[index]
 
     def mutate_genes(self, child):
         for index in self.weight_to_consider:
-            if random.random() < MUTATION_RATE:
+            if np.random.random() < MUTATION_RATE:          # np
                 child.weight_array[index] = TUtils.random_weight()
 
     # Overrides parent's "abstract" method
@@ -201,10 +212,10 @@ class GeneticAgentComplete(GeneticAgent):
         super().__init__()
 
         # Initialize weights randomly
-        self.weight_height = random.random()
-        self.weight_holes = random.random()
-        self.weight_bumpiness = random.random()
-        self.weight_line_clear = random.random()
+        self.weight_height = np.random.random_sample()         # np
+        self.weight_holes = np.random.random_sample()          # np
+        self.weight_bumpiness = np.random.random_sample()      # np
+        self.weight_line_clear = np.random.random_sample()     # np
 
     def get_fitness(self, board):
         """ Utility method to calculate fitness score """
@@ -237,13 +248,13 @@ class GeneticAgentComplete(GeneticAgent):
         child.weight_line_clear = self.weight_line_clear if random.getrandbits(1) else agent.weight_line_clear
 
         # Randomly mutate weights
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_height = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_holes = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_bumpiness = TUtils.random_weight()
-        if random.random() < MUTATION_RATE:
+        if np.random.random_sample() < MUTATION_RATE:              # np
             child.weight_line_clear = TUtils.random_weight()
 
         # Return completed child model
