@@ -103,7 +103,7 @@ def update(screen):
             continue
         TETRIS_GAMES[a].step(AGENTS[a].get_action(TETRIS_GAMES[a]))
 
-    draw(screen)
+    #draw(screen)
     pygame.event.get()
 
 
