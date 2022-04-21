@@ -85,8 +85,8 @@ class GeneticAgent(BaseAgent):
         # np.append(self.weight_array, self.weight_pit_count)
 
         #todo: change to see the impact of having or not several heuristics
-        self.weight_to_consider = [i for i in range(len(self.weight_array))]
-        # self.weight_to_consider = np.asarray(self.weight_to_consider)
+        #self.weight_to_consider = [i for i in range(len(self.weight_array))]
+        self.weight_to_consider = [0,1,2,3]
 
 
     def get_fitness(self, board):
@@ -126,7 +126,7 @@ class GeneticAgent(BaseAgent):
 
         return score
 
-    def cross_over(self, agent ):
+    def cross_over(self, agent ): #todo: change name
         """
         "Breed" with another agent to produce a "child"
 

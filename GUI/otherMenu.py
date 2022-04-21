@@ -1,5 +1,6 @@
 import pygame
 import pygame_gui
+import TetrisParallelClass
 
 HEURISTIC_LABELS = ["Holes", "Height", "Bumpiness", "Line cleared", "Hollow columns", "Row Transition",
                     "Column Transition",
@@ -19,15 +20,18 @@ def handle_run(text_entry_nb_gen,
     validate_heuristics(heuristic_selector, error_text)
     if not error_text.visible:
         print("Let's Get the party started!")
+        tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(text_entry_nb_gen),
+                                                             limit_time=int(text_entry_limit_time),
+                                                             heuristics_selected=heuristic_selector)
+        tetris_parallel.launch()
 
-def validate_heuristics(heuristic_selector, error_text: pygame_gui.elements.ui_text_box.UITextBox):
-    if not heuristic_selector.get_multi_selection():
+def validate_heuristics(heuristic_selected:list, error_text: pygame_gui.elements.ui_text_box.UITextBox):
+    if not heuristic_selected:
         error_text.set_text("Please my dear, choose at least one heuristic to train your Genetic Agents")
         error_text.visible = True
-def validate_nb_gen_entry(text_entry_nb_gen: pygame_gui.elements.ui_text_entry_line.UITextEntryLine,
-                          error_text: pygame_gui.elements.ui_text_box.UITextBox):
 
-    entry = text_entry_nb_gen.text
+def validate_nb_gen_entry(entry: str,
+                          error_text: pygame_gui.elements.ui_text_box.UITextBox):
     if entry =="":
         error_text.set_text("Please write something for the number of gen")
         error_text.visible = True
@@ -35,15 +39,15 @@ def validate_nb_gen_entry(text_entry_nb_gen: pygame_gui.elements.ui_text_entry_l
         error_text.set_text("The number of generation cannot exceed 1000")
         error_text.visible = True
 
-def validate_time_entry(text_entry_limit_time: pygame_gui.elements.ui_text_entry_line.UITextEntryLine,
+def validate_time_entry(entry:str,
                           error_text: pygame_gui.elements.ui_text_box.UITextBox):
 
-    if text_entry_limit_time.text=="":
+    if entry=="":
         error_text.set_text("Please write something for the time limit")
         error_text.visible = True
 
 
-    elif int(text_entry_limit_time.text) < 500 or int(text_entry_limit_time.text) > 5000:
+    elif int(entry) < 500 or int(entry) > 5000:
         error_text.set_text("You cannot train your GA with a time lower 500 or above 5000")
         error_text.visible = True
 
@@ -70,7 +74,7 @@ def run():
                     print(f"Number of generation : {text_entry_nb_gen.text} ")
                     print(f"Time Limit : {text_entry_limit_time.text} ")
                     print(f"Weights to consider : {heuristic_selector.get_multi_selection()}")
-                    handle_run(text_entry_nb_gen, text_entry_limit_time, heuristic_selector, error_text)
+                    handle_run(text_entry_nb_gen.text, text_entry_limit_time.text, heuristic_selector.get_multi_selection(), error_text)
 
                 """
                 if event.ui_element == hello_button:
