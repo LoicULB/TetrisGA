@@ -120,6 +120,8 @@ def get_bumpiness(board):
 
 # Get the aggregate height of all the columns
 def get_aggregate_height(board: List) -> int:
+    GRID_COL_COUNT = len(board[0])
+    GRID_ROW_COUNT = len(board)
     aggregate_height = 0
     column_checked = []
     for row in range(GRID_ROW_COUNT):
@@ -134,6 +136,8 @@ def get_aggregate_height(board: List) -> int:
 
 # Get the number of columns containing at least one hole
 def get_hollow_column_count(board):
+    GRID_COL_COUNT = len(board[0])
+    GRID_ROW_COUNT = len(board)
     nb_hollow_columns = 0
     for col in range(GRID_COL_COUNT):
         is_started = False
@@ -150,6 +154,8 @@ def get_hollow_column_count(board):
 # Get the number of row transition, meaning the number of times we got from occupied cell to unoccupied cell
 # when reading row by row.
 def get_row_transition(board):
+    GRID_COL_COUNT = len(board[0])
+    GRID_ROW_COUNT = len(board)
     nb_row_transition = 0
     for row in range(GRID_ROW_COUNT-1, -1, -1):
         is_empty = True if board[row][0] == 0 else False
@@ -183,6 +189,9 @@ def get_row_transition_from_top(board):
 # Get the number of column transition, meaning the number of times we got from occupied cell to unoccupied cell
 # when reading column by column.
 def get_col_transition(board):
+    GRID_COL_COUNT = len(board[0])
+    GRID_ROW_COUNT = len(board)
+
     nb_col_transition = 0
     for col in range(GRID_COL_COUNT):
         is_empty = True if board[0][col] == 0 else False
