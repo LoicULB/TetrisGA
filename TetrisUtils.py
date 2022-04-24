@@ -83,6 +83,8 @@ def get_fitness_score(board):
 
 # Get height of each column
 def get_col_heights(board):
+    GRID_COL_COUNT = len(board[0])
+    GRID_ROW_COUNT = len(board)
     heights = [0] * GRID_COL_COUNT
     cols = list(range(GRID_COL_COUNT))
     for neg_height, row in enumerate(board):
@@ -111,6 +113,7 @@ def get_hole_count(board):
 
 # Get the unevenness of the board
 def get_bumpiness(board):
+    GRID_COL_COUNT= len(board[0])
     bumpiness = 0
     heights = get_col_heights(board)
     for i in range(1, GRID_COL_COUNT):
@@ -206,6 +209,8 @@ def get_col_transition(board):
 
 # Get the number of empty column
 def get_pit_count(board):
+    GRID_COL_COUNT = len(board[0])
+    GRID_ROW_COUNT = len(board)
     nb_pit = GRID_COL_COUNT
     for col in range(GRID_COL_COUNT):
         for row in range(GRID_ROW_COUNT):
