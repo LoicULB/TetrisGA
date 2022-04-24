@@ -13,8 +13,8 @@ from TetrisAgents import *
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 3 #4
-COL_COUNT = 3 #6
+ROW_COUNT = 4 #4
+COL_COUNT = 6 #6
 GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
 
 # Size of each Tetris display
@@ -57,7 +57,7 @@ gen_top_score = 0.0
 
 # Set a time limit so no forever games
 time_elapsed = 0
-time_limit = 500 #1000
+time_limit = 1000 #1000
 
 
 def update(screen):
@@ -87,7 +87,7 @@ def update(screen):
         # Discard 50% of population
         parents = parents[:GAME_COUNT // 2]
         # Keep first place agent
-        AGENTS = [parents[0]]
+        AGENTS = []
         # Randomly breed the rest of the agents
         while len(AGENTS) < GAME_COUNT:
             parent1, parent2 = random.sample(parents, 2)
