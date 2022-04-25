@@ -37,28 +37,10 @@ MUTATION_RATE = 0.1  # 10% mutation chance
 # End of Settings
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-####################
-# Global Variables #
-####################
-# List of Tetris instances
-TETRIS_GAMES = []
-# List of agents
-AGENTS = []
 # List of heuristics labels to display
 HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hollow Column",
                      "Row Transition", "Column Transition", "Pit Count"]
 
-########################
-# Genetics Information #
-########################
-# Only used when genetic agents are used
-gen_generation = 1  # when this is set to -1, genetic agent is not used
-gen_previous_best_score = 0.0
-gen_top_score = 0.0
-
-# Set a time limit so no forever games
-time_elapsed = 0
-#limit_time = 1000 #1000
 
 @dataclass
 class TetrisParallel:
@@ -66,6 +48,16 @@ class TetrisParallel:
     nb_gen:int
     limit_time:int
     heuristics_selected:list
+    current_gen:int = 1 # when this is set to -1, genetic agent is not used
+    # Only used when genetic agents are used
+    gen_previous_best_score=0.0
+    gen_top_score=0.0
+    time_elapsed=0 # Set a time limit so no forever games
+
+    agents=[]
+    tetris_games=[]
+
+    #todo: debug regression with zombie agents
 
     def launch(self):
         print(f">> Initializing {GAME_COUNT} Tetris games in parallel with a grid of {ROW_COUNT}×{COL_COUNT}...")
@@ -79,12 +71,12 @@ class TetrisParallel:
         # Initialize Tetris modules and agents
         print(f">> Initializing {GAME_COUNT} Tetris agent(s)...")
         for _ in range(GAME_COUNT):
-            TETRIS_GAMES.append(Tetris())
-            AGENTS.append(GeneticAgent(self.heuristics_selected))
+            self.tetris_games.append(Tetris())
+            self.agents.append(GeneticAgent(self.heuristics_selected))
 
         print(f">> Initialization complete! Let the show begin!")
         running = True
-        while gen_generation <= self.nb_gen and running:
+        while self.current_gen <= self.nb_gen and running:
             # Each loop iteration is 1 frame
             event = self.update(display_screen)
             for e in event:
@@ -93,24 +85,22 @@ class TetrisParallel:
 
     def update(self, screen):
         """ Called every frame by the runner, handles updates each frame """
-        global GAME_COUNT, AGENTS
-        global gen_generation, gen_previous_best_score, gen_top_score
-        global time_elapsed #, limit_time
-        time_elapsed += 1
+        self.time_elapsed += 1
 
         # Check if all agents have reached game over state
-        if all(tetris.game_over for tetris in TETRIS_GAMES) or (self.limit_time != -1 and time_elapsed % self.limit_time == 0):
-            df = save_gen(AGENTS, TETRIS_GAMES, None)
-            df.to_csv(f"../SavedModel/model_gen_{gen_generation}.csv", encoding="utf-8", index=False)
-            time_elapsed = 0
+        #todo: debug regression does not stop when all agents are dead
+        if all(tetris.game_over for tetris in self.tetris_games) or (self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
+            df = save_gen(self.agents, self.tetris_games, None)
+            df.to_csv(f"../SavedModel/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
+            self.time_elapsed = 0
             # Everyone "died" or time's up, select best one and cross over
-            combos = zip(AGENTS, TETRIS_GAMES)
+            combos = zip(self.agents, self.tetris_games)
             parents = sorted(combos, key=lambda combo: combo[1].score, reverse=True)
             # Update generation information
-            gen_generation += 1
-            gen_previous_best_score = parents[0][1].score
-            if gen_previous_best_score > gen_top_score:
-                gen_top_score = gen_previous_best_score
+            self.current_gen += 1
+            self.gen_previous_best_score = parents[0][1].score
+            if self.gen_previous_best_score > self.gen_top_score:
+                self.gen_top_score = self.gen_previous_best_score
 
             # Undo zipping
             parents = [a[0] for a in parents]
@@ -118,21 +108,21 @@ class TetrisParallel:
             # Discard 50% of population
             parents = parents[:GAME_COUNT // 2]
             # Keep first place agent
-            AGENTS = [parents[0]]
+            self.agents = [parents[0]]
             # Randomly breed the rest of the agents
-            while len(AGENTS) < GAME_COUNT:
+            while len(self.agents) < GAME_COUNT:
                 parent1, parent2 = random.sample(parents, 2)
-                AGENTS.append(parent1.cross_over(parent2))
+                self.agents.append(parent1.cross_over(parent2))
 
             # Reset games
-            for tetris in TETRIS_GAMES:
+            for tetris in self.tetris_games:
                 tetris.reset_game()
 
         for a in range(GAME_COUNT):
             # If game over, ignore
-            if TETRIS_GAMES[a].game_over:
+            if self.tetris_games[a].game_over:
                 continue
-            TETRIS_GAMES[a].step(AGENTS[a].get_action(TETRIS_GAMES[a]))
+            self.tetris_games[a].step(self.agents[a].get_action(self.tetris_games[a]))
 
         self.draw(screen)
         return pygame.event.get()
@@ -148,7 +138,7 @@ class TetrisParallel:
         curr_x, curr_y = PADDING, PADDING
         for x in range(ROW_COUNT):
             for y in range(COL_COUNT):
-                self.draw_board(screen, TETRIS_GAMES[x * COL_COUNT + y], curr_x, curr_y)
+                self.draw_board(screen, self.tetris_games[x * COL_COUNT + y], curr_x, curr_y)
                 curr_x += GAME_WIDTH + PADDING
             curr_x = PADDING
             curr_y += GAME_HEIGHT + PADDING
@@ -168,19 +158,19 @@ class TetrisParallel:
         curr_y += 20
 
         # Draw genetics
-        if gen_generation > -1:
+        if self.current_gen > -1:
             curr_y += 20
-            self.draw_text(f"Generation #{gen_generation}", screen, (curr_x, curr_y), font_size=24)
+            self.draw_text(f"Generation #{self.current_gen}", screen, (curr_x, curr_y), font_size=24)
             curr_y += 35
-            self.draw_text(f"Time Limit: {time_elapsed}/{self.limit_time}", screen, (curr_x, curr_y))
+            self.draw_text(f"Time Limit: {self.time_elapsed}/{self.limit_time}", screen, (curr_x, curr_y))
             curr_y += 20
 
-            survivor = len([a for a in TETRIS_GAMES if not a.game_over])
+            survivor = len([a for a in self.tetris_games if not a.game_over])
             self.draw_text(f"Survivors: {survivor}/{GAME_COUNT} ({survivor / GAME_COUNT * 100:.1f}%)", screen, (curr_x, curr_y))
             curr_y += 20
-            self.draw_text(f"Prev H.Score: {gen_previous_best_score:.1f}", screen, (curr_x, curr_y))
+            self.draw_text(f"Prev H.Score: {self.gen_previous_best_score:.1f}", screen, (curr_x, curr_y))
             curr_y += 20
-            self.draw_text(f"All Time H.S: {gen_top_score:.1f}", screen, (curr_x, curr_y))
+            self.draw_text(f"All Time H.S: {self.gen_top_score:.1f}", screen, (curr_x, curr_y))
             curr_y += 40
 
             # Display selected agent
@@ -200,8 +190,8 @@ class TetrisParallel:
                 self.draw_text(f"Agent #{agent_index}:", screen, (curr_x, curr_y), font_size=24)
                 curr_y += 35
 
-                for index in AGENTS[agent_index].weight_to_consider :
-                    self.draw_text(f">> {HEURISTICS_LABELS[index]}: {AGENTS[agent_index].weight_array[index]:.1f}", screen, (curr_x, curr_y))
+                for index in self.agents[agent_index].weight_to_consider :
+                    self.draw_text(f">> {HEURISTICS_LABELS[index]}: {self.agents[agent_index].weight_array[index]:.1f}", screen, (curr_x, curr_y))
                     curr_y += 20
 
                 if highlight_selected:
@@ -253,10 +243,10 @@ class TetrisParallel:
         best_indexes, best_score = [], 0
         for a in range(GAME_COUNT):
             # Ignore dead games
-            if TETRIS_GAMES[a].game_over:
+            if self.tetris_games[a].game_over:
                 continue
             # Get score
-            score = TETRIS_GAMES[a].score
+            score = self.tetris_games[a].score
             if score > best_score:
                 best_indexes = [a]
                 best_score = score
@@ -353,7 +343,7 @@ if __name__ == "__main__":
     # Initialize Tetris modules and agents
     print(f">> Initializing {GAME_COUNT} Tetris agent(s)...")
     for _ in range(GAME_COUNT):
-        TETRIS_GAMES.append(Tetris())
+        self.tetris_games.append(Tetris())
         AGENTS.append(GeneticAgent())
 
     print(f">> Initialization complete! Let the show begin!")

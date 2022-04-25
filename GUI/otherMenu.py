@@ -19,13 +19,14 @@ def handle_run(text_entry_nb_gen,
     validate_time_entry(text_entry_limit_time, error_text)
     validate_heuristics(heuristic_selector, error_text)
     heuristics_to_consider = turn_heuristic_strings_into_indexes(heuristic_selector)
+    print(heuristics_to_consider)
     if not error_text.visible:
         print("Let's Get the party started!")
         tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(text_entry_nb_gen),
                                                              limit_time=int(text_entry_limit_time),
                                                              heuristics_selected=heuristics_to_consider)
         tetris_parallel.launch()
-        #todo: keep on holding on
+        return
 
 def turn_heuristic_strings_into_indexes(heuristics_to_consider):
     weight_to_consider = []
