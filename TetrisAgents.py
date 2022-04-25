@@ -45,7 +45,7 @@ class RandomAgent(BaseAgent):
 class GeneticAgent(BaseAgent):
     """ Agent that uses genetics to predict the best action """
 
-    def __init__(self):
+    def __init__(self, weigth_to_consider=[0,1,2,3]):
         super().__init__()
 
         self.weight_array = []
@@ -85,8 +85,7 @@ class GeneticAgent(BaseAgent):
         # np.append(self.weight_array, self.weight_pit_count)
 
         #todo: change to see the impact of having or not several heuristics
-        #self.weight_to_consider = [i for i in range(len(self.weight_array))]
-        self.weight_to_consider = [0,1,2,3]
+        self.weight_to_consider = weigth_to_consider
 
 
     def get_fitness(self, board):

@@ -18,17 +18,42 @@ def handle_run(text_entry_nb_gen,
     validate_nb_gen_entry(text_entry_nb_gen, error_text)
     validate_time_entry(text_entry_limit_time, error_text)
     validate_heuristics(heuristic_selector, error_text)
+    heuristics_to_consider = turn_heuristic_strings_into_indexes(heuristic_selector)
     if not error_text.visible:
         print("Let's Get the party started!")
         tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(text_entry_nb_gen),
                                                              limit_time=int(text_entry_limit_time),
-                                                             heuristics_selected=heuristic_selector)
+                                                             heuristics_selected=heuristics_to_consider)
         tetris_parallel.launch()
+        #todo: keep on holding on
+
+def turn_heuristic_strings_into_indexes(heuristics_to_consider):
+    weight_to_consider = []
+    for heuristic in heuristics_to_consider:
+        if heuristic == "Holes":
+            weight_to_consider.append(0)
+        elif heuristic == "Height":
+            weight_to_consider.append(1)
+        elif heuristic == "Bumpiness":
+            weight_to_consider.append(2)
+        elif heuristic == "Line cleared":
+            weight_to_consider.append(3)
+        elif heuristic == "Hollow columns":
+            weight_to_consider.append(4)
+        elif heuristic == "Row Transition":
+            weight_to_consider.append(5)
+        elif heuristic == "Column Transition":
+            weight_to_consider.append(6)
+        elif heuristic == "Pitcount":
+            weight_to_consider.append(7)
+    return weight_to_consider
+
 
 def validate_heuristics(heuristic_selected:list, error_text: pygame_gui.elements.ui_text_box.UITextBox):
     if not heuristic_selected:
         error_text.set_text("Please my dear, choose at least one heuristic to train your Genetic Agents")
         error_text.visible = True
+
 
 def validate_nb_gen_entry(entry: str,
                           error_text: pygame_gui.elements.ui_text_box.UITextBox):
@@ -39,14 +64,12 @@ def validate_nb_gen_entry(entry: str,
         error_text.set_text("The number of generation cannot exceed 1000")
         error_text.visible = True
 
+
 def validate_time_entry(entry:str,
                           error_text: pygame_gui.elements.ui_text_box.UITextBox):
-
     if entry=="":
         error_text.set_text("Please write something for the time limit")
         error_text.visible = True
-
-
     elif int(entry) < 500 or int(entry) > 5000:
         error_text.set_text("You cannot train your GA with a time lower 500 or above 5000")
         error_text.visible = True
@@ -96,7 +119,8 @@ def run():
 
 def init_window():
     pygame.display.set_caption('Tetris Menu')
-    window_surface = pygame.display.set_mode((800, 600))
+    window_surface = pygame.display.set_mode(size=(TetrisParallelClass.SCREEN_WIDTH, TetrisParallelClass.SCREEN_HEIGHT))
+    #window_surface = pygame.display.set_mode((800, 600))
     background = pygame.Surface((800, 600))
     background.fill(pygame.Color('#000000'))
     manager = pygame_gui.UIManager((800, 600))
@@ -104,9 +128,7 @@ def init_window():
                                                            relative_rect=ERROR_RECTANGLE,
                                                            manager=manager,
                                                            visible=False,
-
                                                            )
-
     return background, window_surface, manager, text_error
 
 

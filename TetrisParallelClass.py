@@ -14,8 +14,8 @@ from dataclasses import dataclass
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 4 #4
-COL_COUNT = 6 #6
+ROW_COUNT = 3 #4
+COL_COUNT = 3 #6
 GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
 
 # Size of each Tetris display
@@ -67,7 +67,6 @@ class TetrisParallel:
     limit_time:int
     heuristics_selected:list
 
-    #todo: use only selected heuristics
     #todo: put limit of generation
 
     def launch(self):
@@ -83,12 +82,16 @@ class TetrisParallel:
         print(f">> Initializing {GAME_COUNT} Tetris agent(s)...")
         for _ in range(GAME_COUNT):
             TETRIS_GAMES.append(Tetris())
-            AGENTS.append(GeneticAgent())
+            AGENTS.append(GeneticAgent(self.heuristics_selected))
 
         print(f">> Initialization complete! Let the show begin!")
-        while True:
+        running = True
+        while running:
             # Each loop iteration is 1 frame
-            self.update(display_screen)
+            event = self.update(display_screen)
+            for e in event:
+                if (e.type == pygame.QUIT):
+                    running = False
 
     def update(self, screen):
         """ Called every frame by the runner, handles updates each frame """
@@ -134,7 +137,8 @@ class TetrisParallel:
             TETRIS_GAMES[a].step(AGENTS[a].get_action(TETRIS_GAMES[a]))
 
         self.draw(screen)
-        pygame.event.get()
+        return pygame.event.get()
+
 
 
     def draw(self, screen):
