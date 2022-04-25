@@ -70,8 +70,8 @@ def validate_time_entry(entry:str,
     if entry=="":
         error_text.set_text("Please write something for the time limit")
         error_text.visible = True
-    elif int(entry) < 500 or int(entry) > 5000:
-        error_text.set_text("You cannot train your GA with a time lower 500 or above 5000")
+    elif int(entry) < 250 or int(entry) > 5000:
+        error_text.set_text("You cannot train your GA with a time lower 250 or above 5000")
         error_text.visible = True
 
 

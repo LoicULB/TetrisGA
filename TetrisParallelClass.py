@@ -67,8 +67,6 @@ class TetrisParallel:
     limit_time:int
     heuristics_selected:list
 
-    #todo: put limit of generation
-
     def launch(self):
         print(f">> Initializing {GAME_COUNT} Tetris games in parallel with a grid of {ROW_COUNT}×{COL_COUNT}...")
 
@@ -86,7 +84,7 @@ class TetrisParallel:
 
         print(f">> Initialization complete! Let the show begin!")
         running = True
-        while running:
+        while gen_generation <= self.nb_gen and running:
             # Each loop iteration is 1 frame
             event = self.update(display_screen)
             for e in event:
@@ -103,7 +101,7 @@ class TetrisParallel:
         # Check if all agents have reached game over state
         if all(tetris.game_over for tetris in TETRIS_GAMES) or (self.limit_time != -1 and time_elapsed % self.limit_time == 0):
             df = save_gen(AGENTS, TETRIS_GAMES, None)
-            df.to_csv(f"./SavedModel/model_gen_{gen_generation}.csv", encoding="utf-8", index=False)
+            df.to_csv(f"../SavedModel/model_gen_{gen_generation}.csv", encoding="utf-8", index=False)
             time_elapsed = 0
             # Everyone "died" or time's up, select best one and cross over
             combos = zip(AGENTS, TETRIS_GAMES)
