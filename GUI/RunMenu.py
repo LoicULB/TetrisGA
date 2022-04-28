@@ -1,36 +1,54 @@
-import pygame
+from dataclasses import dataclass
 import pygame_gui
-from pygame_gui.elements import UIButton
-from pygame_gui import UIManager
+import pygame
+from Menu import Menu
+from pygame_gui.elements.ui_text_box import UITextBox
 
-BASE_WINDOW_SIZE = (800,600)
-BLACK = pygame.Color('#000000')
-FPS = 60
+HEURISTIC_LABELS = ["Holes", "Height", "Bumpiness", "Line cleared", "Hollow columns", "Row Transition",
+                    "Column Transition",
+                    "Pitcount"]
+MAIN_HEURISTICS = HEURISTIC_LABELS[0:4]
 
 
-class StartMenu:
-    def __init__(self, manager : UIManager):
-        self.manager = manager
-        self.background = pygame.Surface(BASE_WINDOW_SIZE)
-        self.background.fill(BLACK)
-        self.is_running=True
+@dataclass
+class StartMenu(Menu):
 
-    def run(self):
-        pass
-    def quit(self):
-        pass
+    def __init__(self, screen_width, screen_height, color_str: str):
+        super().__init__(screen_width, screen_height, color_str, "Start Menu")
+        self.nb_gen_entry = None
+        self.time_limit_entry = None
+        self.run_button = None
+        self.heuristics_selection = None
+        self.init_commands()
 
-def draw_start_menu():
-    pygame.display.set_caption('Tetris GA')
-    window_surface = pygame.display.set_mode(BASE_WINDOW_SIZE)
+    def init_commands(self):
+        heuristics_tb, self.heuristics_selection = self.initialize_selection("Heuristics to consider", 150, 50,
+                                                                             HEURISTIC_LABELS, MAIN_HEURISTICS)
 
-    background = pygame.Surface(BASE_WINDOW_SIZE)
-    background.fill(BLACK)
+        nb_gen_tb, nb_gen_entry = self.initialize_entry_line("Nb Generations", 100, 275)
+        time_limit_tb, time_limit_entry = self.initialize_entry_line("Time limit", 100, 200)
+        run_button = self.initialize_button("Run", 350, 500)
 
-    manager = UIManager(BASE_WINDOW_SIZE)
+        nb_gen_entry.set_allowed_characters("numbers")
+        time_limit_entry.set_allowed_characters("numbers")
+        self.run_button = run_button
+        self.nb_gen_entry = nb_gen_entry
+        self.time_limit_entry = time_limit_entry
 
-    run_button = UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)), text="Run", manager=manager)
+    def handle_events(self, event, is_running):
+        super(StartMenu, self).handle_events(event, is_running)
 
-    quit_button = UIButton(relative_rect=pygame.Rect((350, 175), (100, 50)), text="quit", manager=manager)
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.run_button:
+                # error_text.visible = False
+                str = ""
+                print(f"Number of generation : {self.nb_gen_entry.text} ")
+                print(f"Time Limit : {self.time_limit_entry.text} ")
+                print(f"Weights to consider : {self.heuristics_selection.get_multi_selection()}")
+                # handle_run(text_entry_nb_gen.text, text_entry_limit_time.text, heuristic_selector.get_multi_selection(),
+                # error_text)
+        return is_running
 
-    clock = pygame.time.Clock()
+if __name__ == '__main__':
+    menu = StartMenu(screen_width=800, screen_height=600, color_str="#000000")
+    menu.run()

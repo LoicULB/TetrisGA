@@ -157,8 +157,7 @@ def initialize_buttons(manager):
         default_selection=MAIN_HEURISTICS)
     run_button = pygame_gui.elements.ui_button.UIButton(relative_rect=pygame.Rect((350, 500), (100, 50)), text="Run",
                                                         manager=manager)
-    text_entry_nb_gen.set_allowed_characters("numbers")
-    text_entry_limit_time.set_allowed_characters("numbers")
+
 
     return heuristic_selector, run_button, text_entry_limit_time, text_entry_nb_gen
 
