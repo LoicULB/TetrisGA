@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import pygame_gui
 import pygame
+
+import TetrisParallelClass
 from Menu import Menu
 from pygame_gui.elements.ui_text_box import UITextBox
 
@@ -19,6 +21,11 @@ class StartMenu(Menu):
         self.time_limit_entry = None
         self.run_button = None
         self.heuristics_selection = None
+        self.error_text = pygame_gui.elements.ui_text_box.UITextBox(html_text="",
+                                                           relative_rect= pygame.Rect((200, 350), (300, 100)),
+                                                           manager=self.manager,
+                                                           visible=False,
+                                                           )
         self.init_commands()
 
     def init_commands(self):
@@ -40,14 +47,68 @@ class StartMenu(Menu):
 
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.run_button:
-                # error_text.visible = False
-                str = ""
-                print(f"Number of generation : {self.nb_gen_entry.text} ")
-                print(f"Time Limit : {self.time_limit_entry.text} ")
-                print(f"Weights to consider : {self.heuristics_selection.get_multi_selection()}")
-                # handle_run(text_entry_nb_gen.text, text_entry_limit_time.text, heuristic_selector.get_multi_selection(),
-                # error_text)
+
+                self.error_text.visible = False
+
+                self.handle_run()
         return is_running
+
+    def handle_run(self):
+        self.validate_nb_gen_entry()
+        self.validate_time_entry()
+        self.validate_heuristics()
+        heuristics_to_consider = self.turn_heuristic_strings_into_indexes()
+        print(heuristics_to_consider)
+        if not self.error_text.visible:
+
+            tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(self.nb_gen_entry.text),
+                                                                 limit_time=int(self.time_limit_entry.text),
+                                                                 heuristics_selected=heuristics_to_consider)
+            tetris_parallel.launch()
+            return
+
+    def turn_heuristic_strings_into_indexes(self):
+        weight_to_consider = []
+        for heuristic in self.heuristics_selection.get_multi_selection():
+            if heuristic == "Holes":
+                weight_to_consider.append(0)
+            elif heuristic == "Height":
+                weight_to_consider.append(1)
+            elif heuristic == "Bumpiness":
+                weight_to_consider.append(2)
+            elif heuristic == "Line cleared":
+                weight_to_consider.append(3)
+            elif heuristic == "Hollow columns":
+                weight_to_consider.append(4)
+            elif heuristic == "Row Transition":
+                weight_to_consider.append(5)
+            elif heuristic == "Column Transition":
+                weight_to_consider.append(6)
+            elif heuristic == "Pitcount":
+                weight_to_consider.append(7)
+        return weight_to_consider
+
+    def validate_heuristics(self):
+        if not self.heuristics_selection.get_multi_selection():
+            self.error_text.set_text("Please my dear, choose at least one heuristic to train your Genetic Agents")
+            self.error_text.visible = True
+
+    def validate_nb_gen_entry(self):
+        if self.nb_gen_entry.text == "":
+            self.error_text.set_text("Please write something for the number of gen")
+            self.error_text.visible = True
+        elif int(self.nb_gen_entry.text) > 1000:
+            self.error_text.set_text("The number of generation cannot exceed 1000")
+            self.error_text.visible = True
+
+    def validate_time_entry(self):
+        if self.time_limit_entry.text == "":
+            self.error_text.set_text("Please write something for the time limit")
+            self.error_text.visible = True
+        elif int(self.time_limit_entry.text) < 250 or int(self.time_limit_entry.text) > 5000:
+            self.error_text.set_text("You cannot train your GA with a time lower 250 or above 5000")
+            self.error_text.visible = True
+
 
 if __name__ == '__main__':
     menu = StartMenu(screen_width=800, screen_height=600, color_str="#000000")

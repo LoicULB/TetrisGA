@@ -54,6 +54,8 @@ class Menu:
     def handle_events(self, event, is_running):
         if event.type == pygame.QUIT:
             is_running = False
+            # TODO : handle this fucking STOPS
+            print("I Should STOP")
         return is_running
 
     def run(self):

@@ -91,6 +91,7 @@ def run():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 is_running = False
+
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == run_button:
                     error_text.visible = False
