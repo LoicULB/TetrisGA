@@ -54,14 +54,18 @@ class TetrisParallel:
     gen_top_score=0.0
     time_elapsed=0 # Set a time limit so no forever games
 
-    agents=[]
+    agents = []
     tetris_games=[]
 
-    #todo: debug regression with zombie agents
+
 
     def launch(self):
         print(f">> Initializing {GAME_COUNT} Tetris games in parallel with a grid of {ROW_COUNT}×{COL_COUNT}...")
-
+        print(f"The heuristics selected were : {self.heuristics_selected}")
+        # TODO : understand why the default values does not work (same as before and no overwrite).
+        self.tetris_games=[]
+        self.agents=[]
+        print(f"Do you have already agents? {len(self.agents)}")
         # Initialize PyGame module
         pygame.init()
         pygame.font.init()
