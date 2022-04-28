@@ -92,7 +92,7 @@ class TetrisParallel:
         self.time_elapsed += 1
 
         # Check if all agents have reached game over state
-        #todo: debug regression does not stop when all agents are dead
+
         if all(tetris.game_over for tetris in self.tetris_games) or (self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
             df = save_gen(self.agents, self.tetris_games, None)
             df.to_csv(f"../SavedModel/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
