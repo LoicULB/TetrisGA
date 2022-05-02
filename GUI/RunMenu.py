@@ -32,15 +32,13 @@ class StartMenu(Menu):
         heuristics_tb, self.heuristics_selection = self.initialize_selection("Heuristics to consider", 150, 50,
                                                                              HEURISTIC_LABELS, MAIN_HEURISTICS)
 
-        nb_gen_tb, nb_gen_entry = self.initialize_entry_line("Nb Generations", 100, 275)
-        time_limit_tb, time_limit_entry = self.initialize_entry_line("Time limit", 100, 200)
-        run_button = self.initialize_button("Run", 350, 500)
+        nb_gen_tb, self.nb_gen_entry = self.initialize_entry_line("Nb Generations", 100, 275)
+        time_limit_tb, self.time_limit_entry = self.initialize_entry_line("Time limit", 100, 200)
+        self.run_button = self.initialize_button("Run", 350, 500)
+        self.path = self.initialize_entry_line("Path to save directory", 100, 350)
 
-        nb_gen_entry.set_allowed_characters("numbers")
-        time_limit_entry.set_allowed_characters("numbers")
-        self.run_button = run_button
-        self.nb_gen_entry = nb_gen_entry
-        self.time_limit_entry = time_limit_entry
+        self.nb_gen_entry.set_allowed_characters("numbers")
+        self.time_limit_entry.set_allowed_characters("numbers")
 
     def handle_events(self, event, is_running):
         is_running = super(StartMenu, self).handle_events(event, is_running)
@@ -64,9 +62,10 @@ class StartMenu(Menu):
 
             tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(self.nb_gen_entry.text),
                                                                  limit_time=int(self.time_limit_entry.text),
-                                                                 heuristics_selected=heuristics_to_consider)
+                                                                 heuristics_selected=heuristics_to_consider,
+                                                                 path=self.path)
             tetris_parallel.launch()
-            PlotUtils.plot_training("../SavedModel", int(self.nb_gen_entry.text), name_heuristics)
+            PlotUtils.plot_training(self.path, int(self.nb_gen_entry.text), name_heuristics)
             return
 
     def turn_heuristic_strings_into_indexes(self):

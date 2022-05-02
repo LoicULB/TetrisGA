@@ -2,6 +2,8 @@
 
 # Imports
 import pygame
+import os
+import glob
 
 from SaveModel import save_gen
 from Tetris import Tetris
@@ -45,6 +47,7 @@ HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hol
 @dataclass
 class TetrisParallel:
 
+    path:str
     nb_gen:int
     limit_time:int
     heuristics_selected:list
@@ -78,6 +81,11 @@ class TetrisParallel:
             self.tetris_games.append(Tetris())
             self.agents.append(GeneticAgent(self.heuristics_selected))
 
+        #Clearing the existing model_gen files in the given path
+        files = glob.glob(self.path+"/model_gen_*.csv")
+        for f in files:
+            os.remove(f)
+
         print(f">> Initialization complete! Let the show begin!")
         running = True
         while self.current_gen <= self.nb_gen and running:
@@ -95,7 +103,7 @@ class TetrisParallel:
 
         if all(tetris.game_over for tetris in self.tetris_games) or (self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
             df = save_gen(self.agents, self.tetris_games, None)
-            df.to_csv(f"../SavedModel/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
+            df.to_csv(f"{self.path}/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
             self.time_elapsed = 0
             # Everyone "died" or time's up, select best one and cross over
             combos = zip(self.agents, self.tetris_games)

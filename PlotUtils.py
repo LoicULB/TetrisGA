@@ -14,9 +14,10 @@ def plot_training(path, nb_gen, heuristics):
         highest_score_run.append(df["score"].max())
 
     plt.xlabel("Generation")
-    plt.xticks([i for i in range(1,nb_gen+1)])
+    plt.xticks([i for i in range(1,nb_gen+1)]) #todo: see if we actually start at 1
     plt.ylabel("Highest score")
     plt.title(f"Using {heuristics}")
     plt.suptitle("Evolution highest score over generations")
     plt.plot(highest_score_run)
+    plt.savefig(path + "/graph.jpg")
     plt.show()
