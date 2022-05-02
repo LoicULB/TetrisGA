@@ -54,8 +54,6 @@ class Menu:
     def handle_events(self, event, is_running):
         if event.type == pygame.QUIT:
             is_running = False
-            # TODO : handle this fucking STOPS
-            print("I Should STOP")
         return is_running
 
     def run(self):
@@ -66,9 +64,9 @@ class Menu:
         while is_running:
             time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
-
                 is_running = self.handle_events(event, is_running)
-
+                print("update:")
+                print(is_running)
                 self.manager.process_events(event)
 
             self.manager.update(time_delta)

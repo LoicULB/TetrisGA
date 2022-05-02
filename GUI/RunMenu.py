@@ -43,13 +43,13 @@ class StartMenu(Menu):
         self.time_limit_entry = time_limit_entry
 
     def handle_events(self, event, is_running):
-        super(StartMenu, self).handle_events(event, is_running)
+        is_running = super(StartMenu, self).handle_events(event, is_running)
+        if not is_running:
+            return is_running
 
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.run_button:
-
                 self.error_text.visible = False
-
                 self.handle_run()
         return is_running
 
