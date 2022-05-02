@@ -82,9 +82,12 @@ class TetrisParallel:
             self.agents.append(GeneticAgent(self.heuristics_selected))
 
         #Clearing the existing model_gen files in the given path
-        files = glob.glob(self.path+"/model_gen_*.csv")
-        for f in files:
-            os.remove(f)
+        if os.path.exists(self.path):
+            files = glob.glob(self.path+"/model_gen_*.csv")
+            for f in files:
+                os.remove(f)
+        else:
+            os.makedirs(self.path)
 
         print(f">> Initialization complete! Let the show begin!")
         running = True

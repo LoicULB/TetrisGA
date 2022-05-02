@@ -35,7 +35,7 @@ class StartMenu(Menu):
         nb_gen_tb, self.nb_gen_entry = self.initialize_entry_line("Nb Generations", 100, 275)
         time_limit_tb, self.time_limit_entry = self.initialize_entry_line("Time limit", 100, 200)
         self.run_button = self.initialize_button("Run", 350, 500)
-        self.path = self.initialize_entry_line("Path to save directory", 100, 350)
+        path_tb, self.path = self.initialize_entry_line("Path to save directory", 100, 350)
 
         self.nb_gen_entry.set_allowed_characters("numbers")
         self.time_limit_entry.set_allowed_characters("numbers")
@@ -63,9 +63,9 @@ class StartMenu(Menu):
             tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(self.nb_gen_entry.text),
                                                                  limit_time=int(self.time_limit_entry.text),
                                                                  heuristics_selected=heuristics_to_consider,
-                                                                 path=self.path)
+                                                                 path=self.path.text)
             tetris_parallel.launch()
-            PlotUtils.plot_training(self.path, int(self.nb_gen_entry.text), name_heuristics)
+            PlotUtils.plot_training(self.path.text, int(self.nb_gen_entry.text), name_heuristics)
             return
 
     def turn_heuristic_strings_into_indexes(self):
