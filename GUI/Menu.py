@@ -65,8 +65,6 @@ class Menu:
             time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 is_running = self.handle_events(event, is_running)
-                print("update:")
-                print(is_running)
                 self.manager.process_events(event)
 
             self.manager.update(time_delta)

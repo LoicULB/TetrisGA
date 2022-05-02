@@ -3,8 +3,8 @@ import pygame_gui
 import pygame
 
 import TetrisParallelClass
+import PlotUtils
 from Menu import Menu
-from pygame_gui.elements.ui_text_box import UITextBox
 
 HEURISTIC_LABELS = ["Holes", "Height", "Bumpiness", "Line cleared", "Hollow columns", "Row Transition",
                     "Column Transition",
@@ -57,6 +57,7 @@ class StartMenu(Menu):
         self.validate_nb_gen_entry()
         self.validate_time_entry()
         self.validate_heuristics()
+        name_heuristics = self.heuristics_selection.get_multi_selection().copy()
         heuristics_to_consider = self.turn_heuristic_strings_into_indexes()
         print(heuristics_to_consider)
         if not self.error_text.visible:
@@ -65,6 +66,7 @@ class StartMenu(Menu):
                                                                  limit_time=int(self.time_limit_entry.text),
                                                                  heuristics_selected=heuristics_to_consider)
             tetris_parallel.launch()
+            PlotUtils.plot_training("../SavedModel", int(self.nb_gen_entry.text), name_heuristics)
             return
 
     def turn_heuristic_strings_into_indexes(self):
