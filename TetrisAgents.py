@@ -45,7 +45,7 @@ class RandomAgent(BaseAgent):
 class GeneticAgent(BaseAgent):
     """ Agent that uses genetics to predict the best action """
 
-    def __init__(self):
+    def __init__(self, weigth_to_consider=[0,1,2,3]):
         super().__init__()
 
         self.weight_array = []
@@ -85,8 +85,7 @@ class GeneticAgent(BaseAgent):
         # np.append(self.weight_array, self.weight_pit_count)
 
         #todo: change to see the impact of having or not several heuristics
-        self.weight_to_consider = [0,1,2,3]
-        # self.weight_to_consider = np.asarray(self.weight_to_consider)
+        self.weight_to_consider = weigth_to_consider
 
 
     def get_fitness(self, board):
@@ -126,7 +125,7 @@ class GeneticAgent(BaseAgent):
 
         return score
 
-    def cross_over(self, agent ):
+    def cross_over(self, agent ): #todo: change name
         """
         "Breed" with another agent to produce a "child"
 
@@ -134,7 +133,7 @@ class GeneticAgent(BaseAgent):
         :return: "child" agent
         """
 
-        child = GeneticAgent()
+        child = GeneticAgent(self.weight_to_consider)
 
         self.crossover_genes(agent, child)
         self.mutate_genes(child)
@@ -203,59 +202,3 @@ class GeneticAgent(BaseAgent):
             actions.append(ACTIONS.index(("" if magnitude == 1 else "2") + ("R" if direction == 1 else "L")))
         actions.append(ACTIONS.index("INSTA_FALL"))
         return actions
-
-
-class GeneticAgentComplete(GeneticAgent):
-    """ Agent that uses genetics to predict the best action """
-
-    def __init__(self):
-        super().__init__()
-
-        # Initialize weights randomly
-        self.weight_height = np.random.random_sample()         # np
-        self.weight_holes = np.random.random_sample()          # np
-        self.weight_bumpiness = np.random.random_sample()      # np
-        self.weight_line_clear = np.random.random_sample()     # np
-
-    def get_fitness(self, board):
-        """ Utility method to calculate fitness score """
-        score = 0
-        # Check if the board has any completed rows
-        future_board, clear_count = TUtils.get_board_and_lines_cleared(board)
-        # Calculate the line-clear score and apply weights
-        score += self.weight_line_clear * clear_count
-        # Calculate the aggregate height of future board and apply weights
-        score += self.weight_height * sum(TUtils.get_col_heights(future_board))
-        # Calculate the holes score and apply weights
-        score += self.weight_holes * TUtils.get_hole_count(future_board)
-        # Calculate the "smoothness" score and apply weights
-        score += self.weight_bumpiness * TUtils.get_bumpiness(future_board)
-        # Return the final score
-        return score
-
-    def cross_over(self, agent):
-        """
-        "Breed" with another agent to produce a "child"
-
-        :param agent: the other parent agent
-        :return: "child" agent
-        """
-        child = GeneticAgentComplete()
-        # Choose weight randomly from the parents
-        child.weight_height = self.weight_height if random.getrandbits(1) else agent.weight_height
-        child.weight_holes = self.weight_holes if random.getrandbits(1) else agent.weight_holes
-        child.weight_bumpiness = self.weight_bumpiness if random.getrandbits(1) else agent.weight_bumpiness
-        child.weight_line_clear = self.weight_line_clear if random.getrandbits(1) else agent.weight_line_clear
-
-        # Randomly mutate weights
-        if np.random.random_sample() < MUTATION_RATE:              # np
-            child.weight_height = TUtils.random_weight()
-        if np.random.random_sample() < MUTATION_RATE:              # np
-            child.weight_holes = TUtils.random_weight()
-        if np.random.random_sample() < MUTATION_RATE:              # np
-            child.weight_bumpiness = TUtils.random_weight()
-        if np.random.random_sample() < MUTATION_RATE:              # np
-            child.weight_line_clear = TUtils.random_weight()
-
-        # Return completed child model
-        return child
