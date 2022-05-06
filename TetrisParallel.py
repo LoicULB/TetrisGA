@@ -87,11 +87,13 @@ def update(screen):
         # Discard 50% of population
         parents = parents[:GAME_COUNT // 2]
         # Keep first place agent
-        AGENTS = [parents[0]]
+        AGENTS = []
         # Randomly breed the rest of the agents
         while len(AGENTS) < GAME_COUNT:
             parent1, parent2 = random.sample(parents, 2)
-            AGENTS.append(parent1.cross_over(parent2))
+            #AGENTS.append(parent1.cross_over(parent2))
+            #used to do random agents
+            AGENTS.append(GeneticAgent())
 
         # Reset games
         for tetris in TETRIS_GAMES:

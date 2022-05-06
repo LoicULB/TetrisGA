@@ -16,8 +16,8 @@ from dataclasses import dataclass
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 3 #4
-COL_COUNT = 3 #6
+ROW_COUNT = 3  # 4
+COL_COUNT = 3  # 6
 GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
 
 # Size of each Tetris display
@@ -46,28 +46,27 @@ HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hol
 
 @dataclass
 class TetrisParallel:
-
-    path:str
-    nb_gen:int
-    limit_time:int
-    heuristics_selected:list
-    current_gen:int = 1 # when this is set to -1, genetic agent is not used
+    path: str
+    nb_gen: int
+    limit_time: int
+    heuristics_selected: list
+    random_run: bool
+    current_gen: int = 1  # when this is set to -1, genetic agent is not used
     # Only used when genetic agents are used
-    gen_previous_best_score=0.0
-    gen_top_score=0.0
-    time_elapsed=0 # Set a time limit so no forever games
+    gen_previous_best_score = 0.0
+    gen_top_score = 0.0
+    time_elapsed = 0  # Set a time limit so no forever games
 
     agents = []
-    tetris_games=[]
-
+    tetris_games = []
 
 
     def launch(self):
         print(f">> Initializing {GAME_COUNT} Tetris games in parallel with a grid of {ROW_COUNT}×{COL_COUNT}...")
         print(f"The heuristics selected were : {self.heuristics_selected}")
         # TODO : understand why the default values does not work (same as before and no overwrite).
-        self.tetris_games=[]
-        self.agents=[]
+        self.tetris_games = []
+        self.agents = []
         print(f"Do you have already agents? {len(self.agents)}")
         # Initialize PyGame module
         pygame.init()
@@ -81,9 +80,9 @@ class TetrisParallel:
             self.tetris_games.append(Tetris())
             self.agents.append(GeneticAgent(self.heuristics_selected))
 
-        #Clearing the existing model_gen files in the given path
+        # Clearing the existing model_gen files in the given path
         if os.path.exists(self.path):
-            files = glob.glob(self.path+"/model_gen_*.csv")
+            files = glob.glob(self.path + "/model_gen_*.csv")
             for f in files:
                 os.remove(f)
         else:
@@ -104,7 +103,8 @@ class TetrisParallel:
 
         # Check if all agents have reached game over state
 
-        if all(tetris.game_over for tetris in self.tetris_games) or (self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
+        if all(tetris.game_over for tetris in self.tetris_games) or (
+                self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
             df = save_gen(self.agents, self.tetris_games, None)
             df.to_csv(f"{self.path}/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
             self.time_elapsed = 0
@@ -124,10 +124,16 @@ class TetrisParallel:
             parents = parents[:GAME_COUNT // 2]
             # Keep first place agent
             self.agents = [parents[0]]
+            if self.random_run:
+                self.agents = []
             # Randomly breed the rest of the agents
             while len(self.agents) < GAME_COUNT:
                 parent1, parent2 = random.sample(parents, 2)
-                self.agents.append(parent1.cross_over(parent2))
+                if self.random_run:
+
+                    self.agents.append(GeneticAgent())
+                else:
+                    self.agents.append(parent1.cross_over(parent2))
 
             # Reset games
             for tetris in self.tetris_games:
@@ -141,8 +147,6 @@ class TetrisParallel:
 
         self.draw(screen)
         return pygame.event.get()
-
-
 
     def draw(self, screen):
         """ Called by the update() function every frame, draws the PyGame GUI """
@@ -181,7 +185,8 @@ class TetrisParallel:
             curr_y += 20
 
             survivor = len([a for a in self.tetris_games if not a.game_over])
-            self.draw_text(f"Survivors: {survivor}/{GAME_COUNT} ({survivor / GAME_COUNT * 100:.1f}%)", screen, (curr_x, curr_y))
+            self.draw_text(f"Survivors: {survivor}/{GAME_COUNT} ({survivor / GAME_COUNT * 100:.1f}%)", screen,
+                           (curr_x, curr_y))
             curr_y += 20
             self.draw_text(f"Prev H.Score: {self.gen_previous_best_score:.1f}", screen, (curr_x, curr_y))
             curr_y += 20
@@ -205,8 +210,9 @@ class TetrisParallel:
                 self.draw_text(f"Agent #{agent_index}:", screen, (curr_x, curr_y), font_size=24)
                 curr_y += 35
 
-                for index in self.agents[agent_index].weight_to_consider :
-                    self.draw_text(f">> {HEURISTICS_LABELS[index]}: {self.agents[agent_index].weight_array[index]:.1f}", screen, (curr_x, curr_y))
+                for index in self.agents[agent_index].weight_to_consider:
+                    self.draw_text(f">> {HEURISTICS_LABELS[index]}: {self.agents[agent_index].weight_array[index]:.1f}",
+                                   screen, (curr_x, curr_y))
                     curr_y += 20
 
                 if highlight_selected:
@@ -218,7 +224,6 @@ class TetrisParallel:
 
             # Update display
             pygame.display.update()
-
 
     def highlight(self, screen, index: int, mode: int):
         """
@@ -253,7 +258,6 @@ class TetrisParallel:
             pygame.draw.rect(screen, color, (temp_x, temp_y, -GAME_WIDTH - PADDING + 2, -PADDING / 2))
             pygame.draw.rect(screen, color, (temp_x, temp_y, -PADDING / 2, -GAME_HEIGHT - PADDING + 2))
 
-
     def get_high_score(self):
         best_indexes, best_score = [], 0
         for a in range(GAME_COUNT):
@@ -269,12 +273,11 @@ class TetrisParallel:
                 best_indexes.append(a)
         return best_indexes, best_score
 
-
     def draw_text(self, message: str, screen, offsets, font_size=16, color="WHITE"):
         """ Draws a line of text at the specified offsets """
-        text_image = pygame.font.SysFont(FONT_NAME, font_size).render(message, False, TUtils.get_color_tuple(COLORS.get(color)))
+        text_image = pygame.font.SysFont(FONT_NAME, font_size).render(message, False,
+                                                                      TUtils.get_color_tuple(COLORS.get(color)))
         screen.blit(text_image, offsets)
-
 
     def draw_board(self, screen, tetris: Tetris, x_offset: int, y_offset: int):
         """
@@ -293,20 +296,22 @@ class TetrisParallel:
         # [1] Board tiles
         self.draw_tiles(screen, tetris.board, global_offsets=(x_offset, y_offset))
         # [1] Current tile
-        self.draw_tiles(screen, tetris.tile_shape, offsets=(tetris.tile_x, tetris.tile_y), global_offsets=(x_offset, y_offset))
+        self.draw_tiles(screen, tetris.tile_shape, offsets=(tetris.tile_x, tetris.tile_y),
+                        global_offsets=(x_offset, y_offset))
 
         # [2] Game over graphics
         if tetris.game_over:
             color = TUtils.get_color_tuple(COLORS.get("BACKGROUND_BLACK"))
             ratio = 0.9
-            pygame.draw.rect(screen, color, (x_offset, y_offset + (GAME_HEIGHT * ratio) / 2, GAME_WIDTH, GAME_HEIGHT * (1 - ratio)))
+            pygame.draw.rect(screen, color,
+                             (x_offset, y_offset + (GAME_HEIGHT * ratio) / 2, GAME_WIDTH, GAME_HEIGHT * (1 - ratio)))
 
             message = "GAME OVER"
             color = TUtils.get_color_tuple(COLORS.get("RED"))
             text_image = pygame.font.SysFont(FONT_NAME, GAME_WIDTH // 6).render(message, False, color)
             rect = text_image.get_rect()
-            screen.blit(text_image, (x_offset + (GAME_WIDTH - rect.width) / 2, y_offset + (GAME_HEIGHT - rect.height) / 2))
-
+            screen.blit(text_image,
+                        (x_offset + (GAME_WIDTH - rect.width) / 2, y_offset + (GAME_HEIGHT - rect.height) / 2))
 
     def draw_tiles(self, screen, matrix, offsets=(0, 0), global_offsets=(0, 0), outline_only=False):
         """
@@ -343,6 +348,7 @@ class TetrisParallel:
                     pygame.draw.rect(screen,
                                      TUtils.get_color_tuple(COLORS.get("TILE_" + TILES[val - 1])),
                                      (coord_x + 1, coord_y + 1, GAME_GRID_SIZE - 2, GAME_GRID_SIZE - 2), 1)
+
 
 """
 if __name__ == "__main__":

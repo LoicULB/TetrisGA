@@ -1,5 +1,4 @@
 # Imports
-import random
 from typing import *
 from Tetris import Tetris
 import TetrisUtils as TUtils
