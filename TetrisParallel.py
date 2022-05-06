@@ -92,6 +92,7 @@ def update(screen):
         while len(AGENTS) < GAME_COUNT:
             parent1, parent2 = random.sample(parents, 2)
             #AGENTS.append(parent1.cross_over(parent2))
+            #used to do random agents
             AGENTS.append(GeneticAgent())
 
         # Reset games
