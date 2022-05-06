@@ -16,8 +16,8 @@ from dataclasses import dataclass
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 3  # 4
-COL_COUNT = 3  # 6
+ROW_COUNT = 4  # 4
+COL_COUNT = 6  # 6
 GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
 
 # Size of each Tetris display
@@ -131,7 +131,7 @@ class TetrisParallel:
                 parent1, parent2 = random.sample(parents, 2)
                 if self.random_run:
 
-                    self.agents.append(GeneticAgent())
+                    self.agents.append(GeneticAgent(self.heuristics_selected))
                 else:
                     self.agents.append(parent1.cross_over(parent2))
 
