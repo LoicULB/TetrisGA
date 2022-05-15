@@ -1,5 +1,4 @@
 import pygame
-import pygame_gui
 from pygame_gui.elements import UIButton
 from pygame_gui import UIManager
 BASE_WINDOW_SIZE = (800,600)

@@ -2,9 +2,12 @@ from dataclasses import dataclass
 import pygame_gui
 import pygame
 
+
+
+
+from PlotUtils import plot_training
 import TetrisParallelClass
-import PlotUtils
-from Menu import Menu
+from GUI_Menu import Menu
 
 HEURISTIC_LABELS = ["Holes", "Height", "Bumpiness", "Line cleared", "Hollow columns", "Row Transition",
                     "Column Transition",
@@ -77,7 +80,8 @@ class StartMenu(Menu):
                                                                  heuristics_selected=heuristics_to_consider,
                                                                  path=self.path.text, random_run=random_run)
             tetris_parallel.launch()
-            PlotUtils.plot_training(self.path.text, int(self.nb_gen_entry.text), name_heuristics)
+
+            plot_training(self.path.text, int(self.nb_gen_entry.text), name_heuristics)
             return
 
     def validate_path(self):
