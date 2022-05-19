@@ -5,7 +5,7 @@ description = ""
 authors = ["LoicULB <loic.quivron@ulb.be>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.9"
 numpy = "^1.22.3"
 pygame = "^2.1.2"
 pandas = "^1.4.2"

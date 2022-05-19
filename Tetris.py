@@ -34,6 +34,7 @@ class Tetris:
         # Current tile shape
         # Save this in order to save tile rotations
         self.tile_shape = []
+        self.tetrominoes_number = 0
 
         ##############
         # Statistics #
@@ -85,6 +86,7 @@ class Tetris:
         self.tile_shape = TILE_SHAPES[self.current_tile][:]
         self.tile_x = int(GRID_COL_COUNT / 2 - len(self.tile_shape[0]) / 2)
         self.tile_y = 0
+        self.tetrominoes_number += 1
 
         # Game over check: game over if new tile collides with existing blocks
         return TUtils.check_collision(self.board, self.tile_shape, (self.tile_x, self.tile_y))
@@ -138,11 +140,11 @@ class Tetris:
             # Drop the tile until it collides with existing block(s)
             new_y = TUtils.get_effective_height(self.board, self.tile_shape, (self.tile_x, self.tile_y))
             self.tile_y = new_y + 1
-            self.score += PER_STEP_SCORE_GAIN * (new_y - self.tile_y)
+            #self.score += PER_STEP_SCORE_GAIN * (new_y - self.tile_y)
         else:
             # Drop the tile by 1 grid
             self.tile_y += 1
-            self.score += PER_STEP_SCORE_GAIN
+            #self.score += PER_STEP_SCORE_GAIN
 
         # If doesn't collide, skip next step
         if not instant and not TUtils.check_collision(self.board, self.tile_shape, (self.tile_x, self.tile_y)):
@@ -211,6 +213,7 @@ class Tetris:
         """ Obtains the next tile from the tile pool """
         if not self.tile_pool:
             self.generate_tile_pool()
+        self.score += 1
         return self.tile_pool[0] if not pop else self.tile_pool.pop(0)
 
 

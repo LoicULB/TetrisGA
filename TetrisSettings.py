@@ -1,7 +1,7 @@
 # Configurations (USER)
 SIZE_SCALE = 1
-SPEED_DEFAULT = 750  # 750 MS
-SPEED_SCALE_ENABLED = True  # game gets faster with more points?
+SPEED_DEFAULT = 50  # 750 MS
+SPEED_SCALE_ENABLED = False  # game gets faster with more points?
 SPEED_SCALE = 0.05  # speed = max(50, 750 - SCORE * SPEED_SCALE)
 DISPLAY_PREDICTION = True
 HAS_DISPLAY = True
@@ -57,7 +57,7 @@ MAX_FPS = 30
 ########################
 # Score Configurations #
 ########################
-MULTI_SCORE_ALGORITHM = lambda lines_cleared: 5 ** lines_cleared
+MULTI_SCORE_ALGORITHM = lambda lines_cleared: ((2 ** lines_cleared) * GRID_COL_COUNT)
 PER_STEP_SCORE_GAIN = 0.001
 
 # "Optimal" fitness function configuration

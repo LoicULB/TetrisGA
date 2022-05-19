@@ -40,7 +40,6 @@ class RandomAgent(BaseAgent):
     def calculate_actions(self, board, current_tile, next_tile, offsets):
         return [np.random.randint(0, 8) for _ in range(10)]     # np
 
-
 class GeneticAgent(BaseAgent):
     """ Agent that uses genetics to predict the best action """
 
@@ -48,42 +47,32 @@ class GeneticAgent(BaseAgent):
         super().__init__()
 
         self.weight_array = []
-        # self.weight_array = np.array([])
 
         self.weight_holes = TUtils.random_weight()
         self.weight_array.append(self.weight_holes)
-        # np.append(self.weight_array, self.weight_holes)
 
         self.weight_height = TUtils.random_weight()
         self.weight_array.append(self.weight_height)
-        # np.append(self.weight_array, self.weight_height)
 
         self.weight_bumpiness = TUtils.random_weight()
         self.weight_array.append(self.weight_bumpiness)
-        # np.append(self.weight_array, self.weight_bumpiness)
 
         self.weight_line_clear = TUtils.random_weight()
         self.weight_array.append(self.weight_line_clear)
-        # np.append(self.weight_array, self.weight_line_clear)
 
         #additional heuristics
         self.weight_hollow_columns = TUtils.random_weight()
         self.weight_array.append(self.weight_hollow_columns)
-        # np.append(self.weight_array, self.weight_hollow_columns)
 
         self.weight_row_transition = TUtils.random_weight()
         self.weight_array.append(self.weight_row_transition)
-        # np.append(self.weight_array, self.weight_row_transition)
 
         self.weight_col_transition = TUtils.random_weight()
         self.weight_array.append(self.weight_col_transition)
-        # np.append(self.weight_array, self.weight_col_transition)
 
         self.weight_pit_count = TUtils.random_weight()
         self.weight_array.append(self.weight_pit_count)
-        # np.append(self.weight_array, self.weight_pit_count)
 
-        #todo: change to see the impact of having or not several heuristics
         self.weight_to_consider = weigth_to_consider
 
 
@@ -92,7 +81,7 @@ class GeneticAgent(BaseAgent):
         # Check if the board has any completed rows
         future_board, rows_cleared = TUtils.get_board_and_lines_cleared(board)
 
-        heuristics = [0 for i in range(len(self.weight_array))]
+        heuristics = [0 for i in range(8)]
 
         if 0 in self.weight_to_consider:
             heuristics[0] = TUtils.get_hole_count(future_board)
@@ -201,3 +190,11 @@ class GeneticAgent(BaseAgent):
             actions.append(ACTIONS.index(("" if magnitude == 1 else "2") + ("R" if direction == 1 else "L")))
         actions.append(ACTIONS.index("INSTA_FALL"))
         return actions
+
+class TrainedAgent(GeneticAgent):
+    def __init__(self, precomputed_weigths, weigth_to_consider):
+        super().__init__()
+        self.weight_array = [weight for weight in precomputed_weigths]
+        self.weight_to_consider = weigth_to_consider
+
+
