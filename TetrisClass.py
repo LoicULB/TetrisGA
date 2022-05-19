@@ -71,6 +71,7 @@ class TetrisSolo:
             for e in event:
                 if (e.type == pygame.QUIT):
                     running = False
+        print(f">> Finito ! Score reached: {self.tetris_game.score}")
 
     def update(self, screen):
         self.tetris_game.step(self.agent.get_action(self.tetris_game))
@@ -177,7 +178,7 @@ class TetrisSolo:
                                      (coord_x + 1, coord_y + 1, GAME_GRID_SIZE - 2, GAME_GRID_SIZE - 2), 1)
 
 if __name__ == "__main__":
-    heuristics_selected = [0,1,2,3,6]
-    agent = TrainedAgent([0.207409473747443,0.5781763216126778,-0.04467378393178123,-0.6386169556381716,0.3934708072403077,0.7542533628573156,-0.6459039165841842,0.6483894988038577], heuristics_selected)
-    game = TetrisSolo(250, heuristics_selected, agent)
+    #heuristics_selected = [0,1,2,3,6]
+    agent = TrainedAgent([0.3,-0.7,-0.5,-0.8,-0.5,0.1,-0.5,-0.2],[0, 1, 2, 3, 4, 5, 6, 7])
+    game = TetrisSolo(250, [0,1,2,3,4,5,6,7], agent)
     game.launch()
