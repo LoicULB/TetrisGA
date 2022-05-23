@@ -1,6 +1,6 @@
 # Configurations (USER)
 SIZE_SCALE = 1
-SPEED_DEFAULT = 50  # 750 MS
+SPEED_DEFAULT = 1 # 750 MS
 SPEED_SCALE_ENABLED = False  # game gets faster with more points?
 SPEED_SCALE = 0.05  # speed = max(50, 750 - SCORE * SPEED_SCALE)
 DISPLAY_PREDICTION = True

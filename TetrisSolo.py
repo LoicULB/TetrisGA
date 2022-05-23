@@ -44,7 +44,7 @@ MUTATION_RATE = 0.1  # 10% mutation chance
 HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hollow Column",
                      "Row Transition", "Column Transition", "Pit Count"]
 
-
+import time
 @dataclass
 class TetrisSolo:
     tetrominoes_limit: int
@@ -68,6 +68,7 @@ class TetrisSolo:
         print(f">> Initialization complete! Let the show begin!")
         running = True
         while not self.tetris_game.game_over and self.tetris_game.tetrominoes_number <= self.tetrominoes_limit and running:
+            time.sleep(0.1) # TODO change if we cant FASTER evaluation
             # Each loop iteration is 1 frame
             event = self.update(display_screen)
             for e in event:
