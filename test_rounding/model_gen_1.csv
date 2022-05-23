@@ -1,0 +1,5 @@
+weight_holes,weight_height,weight_bumpiness,weight_line_clear,weight_hollow_columns,weight_row_transition,weight_col_transition,weight_pit_count,weight_to_consider ,score
+-0.185,0.047,-0.559,-0.941,-0.58,0.226,-0.229,-0.012,"[0, 1, 2, 3]",445.0
+0.823,0.059,0.005,-0.682,0.682,0.465,0.472,0.23,"[0, 1, 2, 3]",198.0
+0.771,0.933,0.689,0.882,-0.68,0.461,0.256,-0.053,"[0, 1, 2, 3]",148.0
+0.896,-0.175,0.899,0.489,-0.456,-0.717,0.37,-0.216,"[0, 1, 2, 3]",173.0

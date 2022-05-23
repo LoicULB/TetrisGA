@@ -9,15 +9,15 @@ def get_agent_dict(agent : GeneticAgent):
     Get the dict of the agent's weight
     """
     data = {
-        "weight_holes" : agent.weight_holes,
-        "weight_height" : agent.weight_height,
-        "weight_bumpiness" : agent.weight_bumpiness,
-        "weight_line_clear" : agent.weight_line_clear,
-        "weight_hollow_columns" : agent.weight_hollow_columns,
-        "weight_row_transition" : agent.weight_row_transition,
-        "weight_col_transition": agent.weight_col_transition,
-        "weight_pit_count" : agent.weight_pit_count,
-        "weight_to_consider " : agent.weight_to_consider
+        "weight_holes" : round(agent.weight_holes, 3),
+        "weight_height" : round(agent.weight_height,3),
+        "weight_bumpiness" : round(agent.weight_bumpiness,3),
+        "weight_line_clear" : round(agent.weight_line_clear,3),
+        "weight_hollow_columns" : round(agent.weight_hollow_columns, 3),
+        "weight_row_transition" : round(agent.weight_row_transition,3),
+        "weight_col_transition": round(agent.weight_col_transition,3),
+        "weight_pit_count" : round(agent.weight_pit_count,3),
+        "weight_to_consider " : agent.weight_to_consider,
     }
     return data
 
