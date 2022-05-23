@@ -16,6 +16,8 @@ from dataclasses import dataclass
 # Parallel Training Settings
 
 # Parallel Tetris game count
+from retrieve_best_agent import retrieve_best_agent
+
 ROW_COUNT = 1
 COL_COUNT = 1
 
@@ -183,5 +185,6 @@ if __name__ == "__main__":
     #ancient best : [0.3,-0.7,-0.5,-0.8,-0.5,0.1,-0.5,-0.2],[0, 1, 2, 3, 4, 5, 6, 7]
     agent = TrainedAgent([0.034,-0.104,-0.823,0.428,-0.116,0.171,-0.862,-0.975
 ],[0, 1, 2, 3])
-    game = TetrisSolo(250, [0, 1, 2, 3], agent)
+    agent = retrieve_best_agent("./all_weights_time_500_training")
+    game = TetrisSolo(500, agent.weight_to_consider, agent)
     game.launch()
