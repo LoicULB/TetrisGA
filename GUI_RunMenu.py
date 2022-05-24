@@ -18,8 +18,9 @@ MAIN_HEURISTICS = HEURISTIC_LABELS[0:4]
 @dataclass
 class StartMenu(Menu):
 
-    def __init__(self, screen_width, screen_height, color_str: str):
+    def __init__(self, max_training_time:int, screen_width, screen_height, color_str: str):
         super().__init__(screen_width, screen_height, color_str, "Start Menu")
+        self.max_training_time = max_training_time
         self.nb_gen_entry = None
         self.time_limit_entry = None
         self.run_button = None
@@ -65,6 +66,7 @@ class StartMenu(Menu):
             self.random_run.set_text("Random : True")
         else:
             self.random_run.set_text("Random : False")
+
     def handle_run(self):
         self.validate_nb_gen_entry()
         self.validate_time_entry()
@@ -78,7 +80,8 @@ class StartMenu(Menu):
             tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(self.nb_gen_entry.text),
                                                                  limit_time=int(self.time_limit_entry.text),
                                                                  heuristics_selected=heuristics_to_consider,
-                                                                 path=self.path.text, random_run=random_run)
+                                                                 path=self.path.text, random_run=random_run,
+                                                                 max_training_time=self.max_training_time)
             tetris_parallel.launch()
 
             plot_training(self.path.text, int(self.nb_gen_entry.text), name_heuristics)
@@ -131,8 +134,6 @@ class StartMenu(Menu):
 
         elif int(self.time_limit_entry.text) < 250 or int(self.time_limit_entry.text) > 5000:
             self.display_error("You cannot train your GA with a time lower 250 or above 5000")
-
-
 
 if __name__ == '__main__':
     menu = StartMenu(screen_width=1200, screen_height=800, color_str="#000000")

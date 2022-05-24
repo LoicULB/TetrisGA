@@ -11,13 +11,14 @@ import TetrisUtils as TUtils
 from TetrisSettings import *
 from TetrisAgents import *
 from dataclasses import dataclass
+import time
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 4  # 4
-COL_COUNT = 6  # 6
+ROW_COUNT = 2  # 4
+COL_COUNT = 2  # 6
 GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
 
 # Size of each Tetris display
@@ -51,7 +52,9 @@ class TetrisParallel:
     limit_time: int
     heuristics_selected: list
     random_run: bool
+    max_training_time: int
     current_gen: int = 1  # when this is set to -1, genetic agent is not used
+
     # Only used when genetic agents are used
     gen_previous_best_score = 0.0
     gen_top_score = 0.0
@@ -75,6 +78,7 @@ class TetrisParallel:
         print(f">> Screen size calculated to {SCREEN_WIDTH}×{SCREEN_HEIGHT}...")
 
         # Initialize Tetris modules and agents
+        start_time = time.process_time()
         print(f">> Initializing {GAME_COUNT} Tetris agent(s)...")
         for _ in range(GAME_COUNT):
             self.tetris_games.append(Tetris())
@@ -90,12 +94,14 @@ class TetrisParallel:
 
         print(f">> Initialization complete! Let the show begin!")
         running = True
-        while self.current_gen <= self.nb_gen and running:
+        end_time = 0
+        while self.current_gen <= self.nb_gen and running and end_time-start_time <= self.max_training_time:
             # Each loop iteration is 1 frame
             event = self.update(display_screen)
             for e in event:
                 if (e.type == pygame.QUIT):
                     running = False
+            end_time = time.process_time()
 
     def update(self, screen):
         """ Called every frame by the runner, handles updates each frame """

@@ -4,6 +4,8 @@ import Tetris
 from TetrisAgents import GeneticAgent
 import pandas as pd
 
+
+
 def get_agent_dict(agent : GeneticAgent):
     """
     Get the dict of the agent's weight
