@@ -63,6 +63,11 @@ The default number of tetrominoes is 500.
 
 ## Compare performance with deep-learning tetris
 
-
+In the DQN_main.py file, we can see the modification that we made in order to be able to compare our agents versus the 
+ones from DQN Tetris (we only put a Tetrominoes limit). If you want to do your evaluation : 
+- Train the DQN with the desired amount of episodes (see their README)
+- Train the GA agent with the desired Hyperparameters/Parameters (heuristic to consider, time limit for one generation)
+  - put the number of generation sufficiently high for it to go the same amount of time as the DQN training
+- Launch an evaluation on each project and choose a common tetrominoes limit
 
 

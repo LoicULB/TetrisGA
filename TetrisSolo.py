@@ -68,7 +68,7 @@ class TetrisSolo:
         print(f">> Initialization complete! Let the show begin!")
         running = True
         while not self.tetris_game.game_over and self.tetris_game.tetrominoes_number <= self.tetrominoes_limit and running:
-            time.sleep(0.1) # TODO change if we cant FASTER evaluation
+            time.sleep(0.01) # TODO change if we cant FASTER evaluation
             # Each loop iteration is 1 frame
             event = self.update(display_screen)
             for e in event:
