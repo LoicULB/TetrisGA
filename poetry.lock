@@ -609,7 +609,12 @@ optional = false
 python-versions = ">=3.8"
 
 [package.dependencies]
-numpy = {version = ">=1.21.0", markers = "python_version >= \"3.10\""}
+numpy = [
+    {version = ">=1.18.5", markers = "platform_machine != \"aarch64\" and platform_machine != \"arm64\" and python_version < \"3.10\""},
+    {version = ">=1.19.2", markers = "platform_machine == \"aarch64\" and python_version < \"3.10\""},
+    {version = ">=1.20.0", markers = "platform_machine == \"arm64\" and python_version < \"3.10\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
+]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
 
@@ -1024,8 +1029,8 @@ notebook = ">=4.4.1"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.10"
-content-hash = "e7a2dfdb4894874fb936dd39ae8218de8b39100a8159e760c5537c102586416a"
+python-versions = "^3.9"
+content-hash = "46d962a85df41ff24d9b49480d01d8a9c28a821e49ec013714163f8864c43923"
 
 [metadata.files]
 appnope = [

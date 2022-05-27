@@ -217,7 +217,7 @@ class TetrisParallel:
                 curr_y += 35
 
                 for index in self.agents[agent_index].weight_to_consider:
-                    self.draw_text(f">> {HEURISTICS_LABELS[index]}: {self.agents[agent_index].weight_array[index]:.1f}",
+                    self.draw_text(f">> {HEURISTICS_LABELS[index]}: {self.agents[agent_index].weight_array[index]:.3f}",
                                    screen, (curr_x, curr_y))
                     curr_y += 20
 

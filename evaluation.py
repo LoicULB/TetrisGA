@@ -31,6 +31,14 @@ def main():
         sys.exit()
 
     agent = retrieve_best_agent(args.directory)
+    agent.weight_holes = agent.weight_array[0]
+    agent.weight_height = agent.weight_array[1]
+    agent.weight_bumpiness = agent.weight_array[2]
+    agent.weight_line_clear = agent.weight_array[3]
+    agent.weight_hollow_columns = agent.weight_array[4]
+    agent.weight_row_transition = agent.weight_array[5]
+    agent.weight_col_transition = agent.weight_array[6]
+    agent.weight_pit_count = agent.weight_array[7]
     game = TetrisSolo(args.tetrominoes_limit, agent.weight_to_consider, agent)
     game.launch()
 

@@ -184,8 +184,8 @@ if __name__ == "__main__":
     #heuristics_selected = [0,1,2,3,6]
     #-0.5377318889462748, 0.6464187754904247, -0.595383146754414, 0.4717201419564738, 0.1912561059031963, -0.7967236340755683, -0.23557760949988893, -0.30990042971156195
     #ancient best : [0.3,-0.7,-0.5,-0.8,-0.5,0.1,-0.5,-0.2],[0, 1, 2, 3, 4, 5, 6, 7]
-    agent = TrainedAgent([0.034,-0.104,-0.823,0.428,-0.116,0.171,-0.862,-0.975
-],[0, 1, 2, 3])
-    agent = retrieve_best_agent("./all_weights_time_500_training")
+    #agent = TrainedAgent([-1.0,-0.0,-0.5,-0.2,0.5,-0.5,-1.0,-0.7 ],[0, 1, 2, 3,4,5,6,7]) # REALLY THE time_500_all_VS gen_53 BEST AGENT
+    agent = TrainedAgent([-0.297, -0.577, -0.805, -0.672, 0.664, -0.019, 0.411, -0.981], [0, 1, 2, 3, 4, 5, 6, 7])
+    #agent = retrieve_best_agent("./all_weights_time_500_training")
     game = TetrisSolo(500, agent.weight_to_consider, agent)
     game.launch()
