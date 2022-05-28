@@ -12,6 +12,9 @@ pandas = "^1.4.2"
 jupyter = "^1.0.0"
 matplotlib = "^3.5.2"
 pygame-gui = "^0.6.4"
+scikit-learn = "^1.1.1"
+sklearn = "^0.0"
+Cython = "^0.29.30"
 
 [tool.poetry.dev-dependencies]
 
