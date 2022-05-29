@@ -53,6 +53,7 @@ class TetrisSolo:
     tetris_game = Tetris()
 
     def launch(self):
+        self.tetris_game = Tetris()
         print(f">> Initializing the best Tetris game...")
         print(f"The heuristics selected were : {self.heuristics_selected}")
 
@@ -75,7 +76,8 @@ class TetrisSolo:
                 if (e.type == pygame.QUIT):
                     running = False
         print(f">> Finito ! Score reached: {self.tetris_game.score}")
-
+        pygame.display.quit()
+        pygame.quit()
     def update(self, screen):
         self.tetris_game.step(self.agent.get_action(self.tetris_game))
         self.draw(screen)

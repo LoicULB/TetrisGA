@@ -2,6 +2,8 @@ import argparse
 from pathlib import Path
 import sys
 
+import pandas as pd
+
 from TetrisSolo import TetrisSolo
 from retrieve_best_agent import retrieve_best_agent
 
@@ -13,7 +15,7 @@ def main():
         "--directory",
         type=str,
         help="Path of saved generation on which to evaluate the best agent",
-        default="./SavedModel/ultimate", # TODO replace by our best trained agent
+        default="./SavedModel/training_tt5217_t800_all", # TODO replace by our best trained agent
     )
     parser.add_argument(
         "-t",
@@ -39,9 +41,13 @@ def main():
     agent.weight_row_transition = agent.weight_array[5]
     agent.weight_col_transition = agent.weight_array[6]
     agent.weight_pit_count = agent.weight_array[7]
-    game = TetrisSolo(args.tetrominoes_limit, agent.weight_to_consider, agent)
-    game.launch()
+    scores = []
+    for i in range(25):
+        game = TetrisSolo(args.tetrominoes_limit, agent.weight_to_consider, agent)
 
-
+        game.launch()
+        scores.append(game.tetris_game.score)
+    df = pd.DataFrame(scores, columns=["score"])
+    df.to_csv("saved_score_evaluation_ga_run_1.csv", index=False)
 if __name__ == '__main__':
     main()
