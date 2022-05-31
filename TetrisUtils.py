@@ -1,4 +1,3 @@
-import random
 from copy import deepcopy
 from typing import List
 
@@ -72,14 +71,6 @@ def get_color_tuple(color_hex):
 # Fitness Algorithms #
 ######################
 # Reference to https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
-def get_fitness_score(board):
-    board, score_count = get_board_and_lines_cleared(board)
-    score = WEIGHT_LINE_CLEARED * score_count
-    score += WEIGHT_AGGREGATE_HEIGHT * sum(get_col_heights(board))
-    score += WEIGHT_HOLES * get_hole_count(board)
-    score += WEIGHT_BUMPINESS * get_bumpiness(board)
-    return score
-
 
 # Get height of each column
 def get_col_heights(board):
@@ -166,19 +157,6 @@ def get_row_transition(board):
             break
     return nb_row_transition
 
-# Variant
-def get_row_transition_from_top(board):
-    nb_row_transition = 0
-    for row in range(GRID_ROW_COUNT):
-        is_empty = True if board[row][0] == 0 else False
-        for col in range(GRID_COL_COUNT):
-            if board[row][col] == 0 and not is_empty:
-                nb_row_transition += 1
-                is_empty = True
-            elif board[row][col] != 0 and is_empty:
-                nb_row_transition += 1
-                is_empty = False
-    return nb_row_transition
 
 # Get the number of column transition, meaning the number of times we got from occupied cell to unoccupied cell
 # when reading column by column.
@@ -223,6 +201,6 @@ def get_board_and_lines_cleared(board):
         score_count += 1
     return board, score_count
 
-
+# Compute a random number between -1 and 1 to be used as weight in an agent's configuration
 def random_weight():
     return np.random.uniform(-1, 1)

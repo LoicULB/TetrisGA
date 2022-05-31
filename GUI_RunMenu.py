@@ -3,7 +3,7 @@ import pygame_gui
 import pygame
 
 from PlotUtils import plot_training
-import TetrisParallelClass
+import TetrisParallel
 from GUI_Menu import Menu
 
 HEURISTIC_LABELS = ["Holes", "Height", "Bumpiness", "Line cleared", "Hollow columns", "Row Transition",

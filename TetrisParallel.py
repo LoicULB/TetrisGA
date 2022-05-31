@@ -1,25 +1,21 @@
 """ This file runs multiple instances of the Tetris class in synchronization with a PyGame display """
-
 # Imports
-import pygame
-import os
 import glob
+import os
+import time
+from dataclasses import dataclass
+import pygame
 
 from SaveModel import save_gen
-from Tetris import Tetris
-import TetrisUtils as TUtils
-from TetrisSettings import *
 from TetrisAgents import *
-from dataclasses import dataclass
-import time
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 4  # 4
-COL_COUNT = 6  # 6
-GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
+ROW_COUNT = 4
+COL_COUNT = 6
+GAME_COUNT = ROW_COUNT * COL_COUNT
 
 # Size of each Tetris display
 GAME_WIDTH = 120
@@ -47,15 +43,33 @@ HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hol
 
 @dataclass
 class TetrisParallel:
+    """
+    Class that represents several agents playing individual Tetris games in order to implement a Genetic Algorithm.
+    For each generation, all agents play individually until none of them is alive or that the limit time is reached.
+    Then, we apply the genetic algorithm and start again with the next generation. The agents of the first generation
+    are built randomly. The training stops when the total limit time for the training is reached or when the number
+    of generation is reached.
+
+    :param path: Path to the directory where we want to store the details of each generation and the final score
+    graph.
+    :param nb_ben: Number of generation on which to train (if we do not reach the total limit time before).
+    :param limit_time: Time limit per generation.
+    :param heuristics_selected: List of the index of HEURISTICS_LABELS that the agent uses. (NB: all agents use the same
+    selection of heuristics)
+    :param random_run: Boolean telling whether the agents of each generation must be randomly initialized or not.
+    :param max_training_time: Total limit time for the entire training.
+    NB: this time is computed based on the absolute time from the CPU.
+    :param current_gen: Number of the generation we are actually training.
+    """
     path: str
     nb_gen: int
     limit_time: int
     heuristics_selected: list
     random_run: bool
     max_training_time: int
-    current_gen: int = 1  # when this is set to -1, genetic agent is not used
+    current_gen: int = 1
 
-    # Only used when genetic agents are used
+    #Parameters that will be displayed during the training to keep up
     gen_previous_best_score = 0.0
     gen_top_score = 0.0
     time_elapsed = 0  # Set a time limit so no forever games
@@ -63,14 +77,15 @@ class TetrisParallel:
     agents = []
     tetris_games = []
 
-
     def launch(self):
+        """
+        Function that launches the training of the agents: initialize the pygame and while the agents are not dead
+        or the time limit is not reached, asks for next step and updates the screen. Display each generation after
+        the other, until the limit of generations or total time is reached.
+        """
         print(f">> Initializing {GAME_COUNT} Tetris games in parallel with a grid of {ROW_COUNT}×{COL_COUNT}...")
         print(f"The heuristics selected were : {self.heuristics_selected}")
-        # TODO : understand why the default values does not work (same as before and no overwrite).
-        self.tetris_games = []
-        self.agents = []
-        print(f"Do you have already agents? {len(self.agents)}")
+
         # Initialize PyGame module
         pygame.init()
         pygame.font.init()
@@ -84,6 +99,7 @@ class TetrisParallel:
             self.tetris_games.append(Tetris())
             self.agents.append(GeneticAgent(self.heuristics_selected))
 
+        print(f">> Initializing the save directory...")
         # Clearing the existing model_gen files in the given path
         if os.path.exists(self.path):
             files = glob.glob(self.path + "/model_gen_*.csv")
@@ -108,11 +124,13 @@ class TetrisParallel:
         self.time_elapsed += 1
 
         # Check if all agents have reached game over state
-
         if all(tetris.game_over for tetris in self.tetris_games) or (
                 self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
-            df = save_gen(self.agents, self.tetris_games)
+            # Save the generation agents information
+            df = save_gen(self.agents, self.tetris_games, None)
             df.to_csv(f"{self.path}/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
+
+            #Update the generation
             self.time_elapsed = 0
             # Everyone "died" or time's up, select best one and cross over
             combos = zip(self.agents, self.tetris_games)
@@ -122,21 +140,19 @@ class TetrisParallel:
             self.gen_previous_best_score = parents[0][1].score
             if self.gen_previous_best_score > self.gen_top_score:
                 self.gen_top_score = self.gen_previous_best_score
-
             # Undo zipping
             parents = [a[0] for a in parents]
-
             # Discard 50% of population
             parents = parents[:GAME_COUNT // 2]
             # Keep first place agent
             self.agents = [parents[0]]
             if self.random_run:
                 self.agents = []
+
             # Randomly breed the rest of the agents
             while len(self.agents) < GAME_COUNT:
                 parent1, parent2 = random.sample(parents, 2)
                 if self.random_run:
-
                     self.agents.append(GeneticAgent(self.heuristics_selected))
                 else:
                     self.agents.append(parent1.cross_over(parent2))
@@ -354,26 +370,3 @@ class TetrisParallel:
                     pygame.draw.rect(screen,
                                      TUtils.get_color_tuple(COLORS.get("TILE_" + TILES[val - 1])),
                                      (coord_x + 1, coord_y + 1, GAME_GRID_SIZE - 2, GAME_GRID_SIZE - 2), 1)
-
-
-"""
-if __name__ == "__main__":
-    print(f"Hello world!")
-    print(f">> Initializing {GAME_COUNT} Tetris games in parallel with a grid of {ROW_COUNT}×{COL_COUNT}...")
-
-    # Initialize PyGame module
-    pygame.init()
-    pygame.font.init()
-    display_screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
-    print(f">> Screen size calculated to {SCREEN_WIDTH}×{SCREEN_HEIGHT}...")
-
-    # Initialize Tetris modules and agents
-    print(f">> Initializing {GAME_COUNT} Tetris agent(s)...")
-    for _ in range(GAME_COUNT):
-        self.tetris_games.append(Tetris())
-        AGENTS.append(GeneticAgent())
-
-    print(f">> Initialization complete! Let the show begin!")
-    while True:
-        # Each loop iteration is 1 frame
-        update(display_screen)"""

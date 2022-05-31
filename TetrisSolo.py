@@ -1,23 +1,14 @@
-""" This file runs multiple instances of the Tetris class in synchronization with a PyGame display """
-
 # Imports
-import pygame
-import os
-import glob
-
-from SaveModel import save_gen
-from Tetris import Tetris
-import TetrisUtils as TUtils
-from TetrisSettings import *
-from TetrisAgents import *
 from dataclasses import dataclass
+import pygame
+import time
+
+from TetrisAgents import *
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Parallel Training Settings
 
-# Parallel Tetris game count
-from retrieve_best_agent import retrieve_best_agent
-
+# We only have one agent (keep the ROW and COL_COUNT for ease)
 ROW_COUNT = 1
 COL_COUNT = 1
 
@@ -44,42 +35,56 @@ MUTATION_RATE = 0.1  # 10% mutation chance
 HEURISTICS_LABELS = ["Hole Count", "Agg Height", "Bumpiness", "Line Clear", "Hollow Column",
                      "Row Transition", "Column Transition", "Pit Count"]
 
-import time
 @dataclass
 class TetrisSolo:
+    """
+    Class that represent one single Tetris game, initialized with a specific agent.
+    NB: This class is only used for evaluating the agent, never to train it (as a GA would require several agents).
+
+    :param tetrominoes_limit: the maximum number of tetrominoes that the agent will receive for its evaluations. It could
+        receive less if it dies before reaching the limit.
+    :param heuristic_select: a list of the index of HEURISTICS_LABELS that the agent uses.
+    :param agent: a Tetris agent with its own weights for each heuristic that it considers.
+    :param tetris_game: a new instance of Tetris such that the agent begins its evaluation from the start.
+    """
     tetrominoes_limit: int
     heuristics_selected: list
     agent: GeneticAgent
     tetris_game = Tetris()
 
     def launch(self):
+        """
+        Function that launches the evaluation of the agent: initialize the pygame and while the agent is not dead
+        or the limit number of tetrominoes is not reached, asks for next step and updates the screen.
+        """
         self.tetris_game = Tetris()
         print(f">> Initializing the best Tetris game...")
         print(f"The heuristics selected were : {self.heuristics_selected}")
 
-        # Initialize PyGame module
+        # Initialize PyGame module and music
         pygame.init()
         pygame.font.init()
         pygame.mixer.music.load("OST/TetrisTheme.mp3")
         pygame.mixer.music.play()
         display_screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
-        print(f">> Screen size calculated to {SCREEN_WIDTH}×{SCREEN_HEIGHT}...")
 
         # Initialize Tetris modules and agents
-        print(f">> Initializing the Tetris agent...")
-
         print(f">> Initialization complete! Let the show begin!")
+
         running = True
         while not self.tetris_game.game_over and self.tetris_game.tetrominoes_number <= self.tetrominoes_limit and running:
-            time.sleep(0.01) # TODO change if we cant FASTER evaluation
+            #NB: can comment it such that the evaluation is done faster. Better with it for vizualisation
+            time.sleep(0.01)
             # Each loop iteration is 1 frame
             event = self.update(display_screen)
             for e in event:
                 if (e.type == pygame.QUIT):
                     running = False
+
         print(f">> Finito ! Score reached: {self.tetris_game.score}")
         pygame.display.quit()
         pygame.quit()
+
     def update(self, screen):
         self.tetris_game.step(self.agent.get_action(self.tetris_game))
         self.draw(screen)
@@ -94,7 +99,6 @@ class TetrisSolo:
         curr_x, curr_y = PADDING, PADDING
         self.draw_board(screen, self.tetris_game, curr_x, curr_y)
 
-        # Draw statistics
         # Realign starting point to statistics bar
         curr_x, curr_y = GAME_WIDTH * COL_COUNT + PADDING * (COL_COUNT + 1), PADDING
 
@@ -102,11 +106,10 @@ class TetrisSolo:
         self.draw_text("Tetris", screen, (curr_x, curr_y), font_size=48)
         curr_y += 60
         # Draw statistics
-        self.draw_text(f"H.Score: {self.tetris_game.score:.1f}", screen, (curr_x, curr_y))
+        self.draw_text(f"Score: {self.tetris_game.score:.1f}", screen, (curr_x, curr_y))
         curr_y += 20
         self.draw_text(f"Number of tetrominoes: {self.tetris_game.tetrominoes_number:.1f}", screen, (curr_x, curr_y))
         pygame.display.update()
-
 
     def draw_text(self, message: str, screen, offsets, font_size=16, color="WHITE"):
         """ Draws a line of text at the specified offsets """
@@ -183,13 +186,3 @@ class TetrisSolo:
                     pygame.draw.rect(screen,
                                      TUtils.get_color_tuple(COLORS.get("TILE_" + TILES[val - 1])),
                                      (coord_x + 1, coord_y + 1, GAME_GRID_SIZE - 2, GAME_GRID_SIZE - 2), 1)
-
-if __name__ == "__main__":
-    #heuristics_selected = [0,1,2,3,6]
-    #-0.5377318889462748, 0.6464187754904247, -0.595383146754414, 0.4717201419564738, 0.1912561059031963, -0.7967236340755683, -0.23557760949988893, -0.30990042971156195
-    #ancient best : [0.3,-0.7,-0.5,-0.8,-0.5,0.1,-0.5,-0.2],[0, 1, 2, 3, 4, 5, 6, 7]
-    #agent = TrainedAgent([-1.0,-0.0,-0.5,-0.2,0.5,-0.5,-1.0,-0.7 ],[0, 1, 2, 3,4,5,6,7]) # REALLY THE time_500_all_VS gen_53 BEST AGENT
-    agent = TrainedAgent([-0.297, -0.577, -0.805, -0.672, 0.664, -0.019, 0.411, -0.981], [0, 1, 2, 3, 4, 5, 6, 7])
-    #agent = retrieve_best_agent("./all_weights_time_500_training")
-    game = TetrisSolo(500, agent.weight_to_consider, agent)
-    game.launch()
