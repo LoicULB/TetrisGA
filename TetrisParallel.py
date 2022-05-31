@@ -155,7 +155,7 @@ class TetrisParallel:
                 if self.random_run:
                     self.agents.append(GeneticAgent(self.heuristics_selected))
                 else:
-                    self.agents.append(parent1.cross_over(parent2))
+                    self.agents.append(parent1.breed(parent2))
 
             # Reset games
             for tetris in self.tetris_games:

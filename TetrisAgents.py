@@ -123,7 +123,7 @@ class GeneticAgent(BaseAgent):
 
         return score
 
-    def cross_over(self, agent):
+    def breed(self, agent):
         """
         "Breed" with another agent to produce a "child"
 
@@ -133,12 +133,12 @@ class GeneticAgent(BaseAgent):
 
         child = GeneticAgent(self.weight_to_consider)
 
-        self.crossover_genes(agent, child)
+        self.crossover(agent, child)
         self.mutate_genes(child)
 
         return child
 
-    def crossover_genes(self, agent, child):
+    def crossover(self, agent, child):
         """
         Crossover the genes of the current agent with another one and modify the genes of the child accordingly
         :param agent: the other agent with which the current is breed
