@@ -60,6 +60,8 @@ class TetrisSolo:
         # Initialize PyGame module
         pygame.init()
         pygame.font.init()
+        pygame.mixer.music.load("OST/TetrisTheme.mp3")
+        pygame.mixer.music.play()
         display_screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
         print(f">> Screen size calculated to {SCREEN_WIDTH}×{SCREEN_HEIGHT}...")
 
