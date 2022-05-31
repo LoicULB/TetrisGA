@@ -2,6 +2,9 @@ import argparse
 
 from GUI_RunMenu import Menu, StartMenu
 
+"""
+Main file use to train the agents (from poetry commands)
+"""
 
 def main():
     parser = argparse.ArgumentParser(description="The Tetris game")

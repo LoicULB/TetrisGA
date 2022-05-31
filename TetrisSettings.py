@@ -1,11 +1,5 @@
 # Configurations (USER)
 SIZE_SCALE = 1
-SPEED_DEFAULT = 1 # 750 MS
-SPEED_SCALE_ENABLED = False  # game gets faster with more points?
-SPEED_SCALE = 0.05  # speed = max(50, 750 - SCORE * SPEED_SCALE)
-DISPLAY_PREDICTION = True
-HAS_DISPLAY = True
-MIN_DEBUG_LEVEL = 1
 
 FONT_NAME = "Consolas"
 
@@ -32,17 +26,6 @@ COLORS = {
     "HIGHLIGHT_RED": "ee2222",
 }
 
-MESSAGES = {
-    # Display
-    "TITLE": "Tetris",
-    "CONTROLS": "Left/Right - Move tile\nUp - Rotate tile\nDown - Fast drop\nSpace - Insta-drop\nEscape - Play/Pause\nTab - Swap next tile",
-    "HIGH_SCORE": "H.Score: {:.2f} (x{})",
-    "SCORE": "Score: {:.2f} (x{})",
-    "FITNESS": "Fitness: {:.2f}",
-    "SPEED": "Speed: {}ms",
-    "NEXT_TILE": "Next tile: {}",
-}
-
 SEP = ", "
 
 # Configurations (SYSTEM)
@@ -52,28 +35,17 @@ GRID_COL_COUNT = 10
 SCREEN_RATIO = 0.55
 SCREEN_WIDTH = int(360 / SCREEN_RATIO * SIZE_SCALE)
 SCREEN_HEIGHT = int(720 * SIZE_SCALE)
-MAX_FPS = 30
 
 ########################
 # Score Configurations #
 ########################
 MULTI_SCORE_ALGORITHM = lambda lines_cleared: ((2 ** lines_cleared) * GRID_COL_COUNT)
-PER_STEP_SCORE_GAIN = 0.001
-
-# "Optimal" fitness function configuration
-WEIGHT_AGGREGATE_HEIGHT = -0.3
-WEIGHT_HOLES = -0.75
-WEIGHT_BUMPINESS = -0.18
-WEIGHT_LINE_CLEARED = 1.3
 
 ######################
 # STEP Configuration #
 ######################
-ALWAYS_DRAW = True
-STEP_ACTION = True
 
 ACTIONS = ["NOTHING", "L", "R", "2L", "2R", "ROTATE", "SWAP", "FAST_FALL", "INSTA_FALL"]
-
 
 ######################
 # Tile Configuration #
