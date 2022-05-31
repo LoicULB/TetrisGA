@@ -17,8 +17,8 @@ import time
 # Parallel Training Settings
 
 # Parallel Tetris game count
-ROW_COUNT = 2  # 4
-COL_COUNT = 2  # 6
+ROW_COUNT = 4  # 4
+COL_COUNT = 6  # 6
 GAME_COUNT = ROW_COUNT * COL_COUNT  # no need to modify
 
 # Size of each Tetris display
