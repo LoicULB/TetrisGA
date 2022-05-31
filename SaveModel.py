@@ -4,7 +4,9 @@ import Tetris
 from TetrisAgents import GeneticAgent
 import pandas as pd
 
-
+"""
+Save the information of a generation into a csv file
+"""
 
 def get_agent_dict(agent : GeneticAgent):
     """
@@ -23,7 +25,7 @@ def get_agent_dict(agent : GeneticAgent):
     }
     return data
 
-def save_gen(agents_list : List[GeneticAgent], tetris_games : List[Tetris.Tetris], weight_to_consider : List[int]):
+def save_gen(agents_list : List[GeneticAgent], tetris_games : List[Tetris.Tetris]):
     """
     Save a generation of the tetris game into a csv file.
     """

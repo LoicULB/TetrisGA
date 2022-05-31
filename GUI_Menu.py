@@ -7,6 +7,9 @@ from pygame_gui.elements.ui_selection_list import UISelectionList
 
 @dataclass()
 class Menu:
+    """
+    Main class used to define a menu in our Tetris Training Framework
+    """
     manager: pygame_gui.UIManager
     window_surface: pygame.Surface
     background: pygame.Surface
@@ -74,7 +77,3 @@ class Menu:
 
             pygame.display.update()
 
-
-if __name__ == '__main__':
-    menu = Menu(screen_width=800, screen_height=600, caption="Test Interface Menu", color_str="#FFFFFF")
-    menu.run()

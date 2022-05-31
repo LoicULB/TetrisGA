@@ -7,6 +7,9 @@ import pandas as pd
 from TetrisSolo import TetrisSolo
 from retrieve_best_agent import retrieve_best_agent
 
+"""
+File used to evaluate the agent
+"""
 
 def main():
     parser = argparse.ArgumentParser(description="The Tetris game")
@@ -42,12 +45,11 @@ def main():
     agent.weight_col_transition = agent.weight_array[6]
     agent.weight_pit_count = agent.weight_array[7]
     scores = []
-    for i in range(25):
-        game = TetrisSolo(args.tetrominoes_limit, agent.weight_to_consider, agent)
 
-        game.launch()
-        scores.append(game.tetris_game.score)
-    df = pd.DataFrame(scores, columns=["score"])
-    df.to_csv("saved_score_evaluation_ga_run_1.csv", index=False)
+    game = TetrisSolo(args.tetrominoes_limit, agent.weight_to_consider, agent)
+
+    game.launch()
+    scores.append(game.tetris_game.score)
+
 if __name__ == '__main__':
     main()

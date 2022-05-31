@@ -2,7 +2,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from os.path import isfile
 
+
 def plot_training(path, nb_gen, heuristics):
+
+    """
+    Plot the evolution of the highest score of the
+    :param path: the path of where to save the graphic file
+    :param nb_gen: the number of generation
+    :param heuristics: the heuristics considered
+    """
     highest_score_run = []
     for i in range(1, nb_gen+1):
         file_name = path + f"/model_gen_{i}.csv"

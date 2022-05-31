@@ -4,6 +4,10 @@ from tetris import Tetris
 import argparse
 from pathlib import Path
 
+"""
+This python file was the main.py file of the previous students who did the DQN Tetris. 
+We only added small changes in order to force a tetrominoes limit.
+"""
 TETROMINOES_LIMIT = 500
 
 def main(render=True):

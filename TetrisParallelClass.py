@@ -111,7 +111,7 @@ class TetrisParallel:
 
         if all(tetris.game_over for tetris in self.tetris_games) or (
                 self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
-            df = save_gen(self.agents, self.tetris_games, None)
+            df = save_gen(self.agents, self.tetris_games)
             df.to_csv(f"{self.path}/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
             self.time_elapsed = 0
             # Everyone "died" or time's up, select best one and cross over

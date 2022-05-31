@@ -4,11 +4,19 @@ from Tetris import Tetris
 import TetrisUtils as TUtils
 from TetrisSettings import *
 
-
 import random
 import numpy as np
 
+"""
+In this file is defined the Agent classes. 
+The Base Agent is just an abstract class to implement
+The Genetic Agent is our implementation of a genetic agent
+The only thing that we kept from the original class source code is the calculate action function
+The Trained Agent is a class used to create already trained agents
+"""
 MUTATION_RATE = 0.1
+
+
 class BaseAgent:
     """ The framework of an agent class, all agents should inherit this class """
 
@@ -17,7 +25,9 @@ class BaseAgent:
 
     def get_action(self, tetris: Tetris) -> int:
         if len(self.action_queue) == 0:
-            self.action_queue = self.calculate_actions(tetris.board, tetris.tile_shape, TILE_SHAPES[tetris.get_next_tile()], (tetris.tile_x, tetris.tile_y))
+            self.action_queue = self.calculate_actions(tetris.board, tetris.tile_shape,
+                                                       TILE_SHAPES[tetris.get_next_tile()],
+                                                       (tetris.tile_x, tetris.tile_y))
         return self.action_queue.pop(0)
 
     def calculate_actions(self, board, current_tile, next_tile, offsets) -> List[int]:
@@ -38,12 +48,13 @@ class RandomAgent(BaseAgent):
     """ Agent that randomly picks actions """
 
     def calculate_actions(self, board, current_tile, next_tile, offsets):
-        return [np.random.randint(0, 8) for _ in range(10)]     # np
+        return [np.random.randint(0, 8) for _ in range(10)]  # np
+
 
 class GeneticAgent(BaseAgent):
     """ Agent that uses genetics to predict the best action """
 
-    def __init__(self, weigth_to_consider=[0,1,2,3]):
+    def __init__(self, weigth_to_consider=[0, 1, 2, 3]):
         super().__init__()
 
         self.weight_array = []
@@ -60,7 +71,7 @@ class GeneticAgent(BaseAgent):
         self.weight_line_clear = TUtils.random_weight()
         self.weight_array.append(self.weight_line_clear)
 
-        #additional heuristics
+        # additional heuristics
         self.weight_hollow_columns = TUtils.random_weight()
         self.weight_array.append(self.weight_hollow_columns)
 
@@ -75,10 +86,9 @@ class GeneticAgent(BaseAgent):
 
         self.weight_to_consider = weigth_to_consider
 
-
     def get_fitness(self, board):
         """ Utility method to calculate fitness score """
-        # Check if the board has any completed rows
+
         future_board, rows_cleared = TUtils.get_board_and_lines_cleared(board)
 
         heuristics = [0 for i in range(8)]
@@ -109,11 +119,11 @@ class GeneticAgent(BaseAgent):
 
         score = 0
         for index in self.weight_to_consider:
-            score += self.weight_array[index]*heuristics[index]
+            score += self.weight_array[index] * heuristics[index]
 
         return score
 
-    def cross_over(self, agent ): #todo: change name
+    def cross_over(self, agent):
         """
         "Breed" with another agent to produce a "child"
 
@@ -129,15 +139,24 @@ class GeneticAgent(BaseAgent):
         return child
 
     def crossover_genes(self, agent, child):
+        """
+        Crossover the genes of the current agent with another one and modify the genes of the child accordingly
+        :param agent: the other agent with which the current is breed
+        :param child: the child
+        """
         for index in self.weight_to_consider:
-            if random.getrandbits(1):   # todo: NumPy equivalent to random.getrandbits()
+            if random.getrandbits(1):
                 child.weight_array[index] = self.weight_array[index]
             else:
                 child.weight_array[index] = agent.weight_array[index]
 
     def mutate_genes(self, child):
+        """
+        Apply the mutation of the genes of the child
+        :param child: the child on which to apply the mutation
+        """
         for index in self.weight_to_consider:
-            if np.random.random() < MUTATION_RATE:          # np
+            if np.random.random() < MUTATION_RATE:
                 child.weight_array[index] = TUtils.random_weight()
 
     # Overrides parent's "abstract" method
@@ -191,10 +210,13 @@ class GeneticAgent(BaseAgent):
         actions.append(ACTIONS.index("INSTA_FALL"))
         return actions
 
+
 class TrainedAgent(GeneticAgent):
+    """
+    Define an already trained agent
+    """
+
     def __init__(self, precomputed_weigths, weigth_to_consider):
         super().__init__()
         self.weight_array = [weight for weight in precomputed_weigths]
         self.weight_to_consider = weigth_to_consider
-
-
