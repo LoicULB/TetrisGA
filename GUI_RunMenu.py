@@ -3,9 +3,8 @@ import pygame_gui
 import pygame
 
 from PlotUtils import plot_training
-import TetrisParallel
 from GUI_Menu import Menu
-
+from TetrisParallel import TetrisParallel
 HEURISTIC_LABELS = ["Holes", "Height", "Bumpiness", "Line cleared", "Hollow columns", "Row Transition",
                     "Column Transition",
                     "Pitcount"]
@@ -94,7 +93,7 @@ class StartMenu(Menu):
         if not self.error_text.visible:
             random_run = "True" in self.random_run.text
 
-            tetris_parallel = TetrisParallelClass.TetrisParallel(nb_gen=int(self.nb_gen_entry.text),
+            tetris_parallel = TetrisParallel(nb_gen=int(self.nb_gen_entry.text),
                                                                  limit_time=int(self.time_limit_entry.text),
                                                                  heuristics_selected=heuristics_to_consider,
                                                                  path=self.path.text, random_run=random_run,

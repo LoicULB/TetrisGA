@@ -118,6 +118,7 @@ class TetrisParallel:
                 if (e.type == pygame.QUIT):
                     running = False
             end_time = time.process_time()
+        print(f"Training time : {end_time-start_time}")
 
     def update(self, screen):
         """ Called every frame by the runner, handles updates each frame """
@@ -127,7 +128,7 @@ class TetrisParallel:
         if all(tetris.game_over for tetris in self.tetris_games) or (
                 self.limit_time != -1 and self.time_elapsed % self.limit_time == 0):
             # Save the generation agents information
-            df = save_gen(self.agents, self.tetris_games, None)
+            df = save_gen(self.agents, self.tetris_games)
             df.to_csv(f"{self.path}/model_gen_{self.current_gen}.csv", encoding="utf-8", index=False)
 
             #Update the generation
